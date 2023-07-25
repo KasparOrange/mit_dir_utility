@@ -53,12 +53,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBMbgVePv75XvtkwZktALPsx2ZmYPqJqBI',
-    appId: '1:420103293848:web:0bdea8da1147db7d3b39ed',
-    messagingSenderId: '420103293848',
-    projectId: 'mirdirutility',
-    authDomain: 'mirdirutility.firebaseapp.com',
-    storageBucket: 'mirdirutility.appspot.com',
-    measurementId: 'G-EZ9W4R5HKC',
+    apiKey: 'AIzaSyBx-mR-cmW6l8-yoJilF5riDoUjENGSswo',
+    appId: '1:688163796149:web:699063d66d3a1a330cfafc',
+    messagingSenderId: '688163796149',
+    projectId: 'mitware-b6913',
+    authDomain: 'mitware-b6913.firebaseapp.com',
+    storageBucket: 'mitware-b6913.appspot.com',
+    measurementId: 'G-C87SKR9Z0T',
   );
 }
