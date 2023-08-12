@@ -8,7 +8,7 @@ class UserModel {
   String email;
   String firstName;
   String lastName;
-  DateTime lastUpdate = DateTime.now().toUtc();
+  late DateTime lastUpdate;
   String nickName;
   String note;
   String phone;
@@ -26,7 +26,9 @@ class UserModel {
     required this.nickName,
     required this.note,
     required this.phone,
-  });
+  }) {
+    lastUpdate = DateTime.now().toUtc();
+  }
 
   UserModel.incomplete(
       {required this.firstName,
@@ -47,7 +49,6 @@ class UserModel {
             DateTime.now()
                 .toUtc(); // NOTE: If no creationTime is provided we assume the user is new and assign now to this field.
 
-
   UserModel.fromMap({required Map<String, dynamic> map})
       : this(
           creationTime: (map['creationTime'] as Timestamp).toDate(),
@@ -61,7 +62,7 @@ class UserModel {
           phone: map['phone'],
         );
 
-    UserModel.empty()
+  UserModel.empty()
       : this(
           creationTime: DateTime.now().toUtc(),
           dateOfBirth: DateTime.utc(1900, 1, 1),
@@ -69,7 +70,7 @@ class UserModel {
           firstName: 'EMPTY',
           lastName: 'EMPTY',
           nickName: 'EMPTY',
-          uid:'EMPTY',
+          uid: 'EMPTY',
           note: 'EMPTY',
           phone: 'EMPTY',
         );
@@ -81,6 +82,7 @@ class UserModel {
       'email': email,
       'firstName': firstName,
       'lastName': lastName,
+      'lastUpdate': lastUpdate,
       'nickName': nickName,
       'note': note,
       'phone': phone,

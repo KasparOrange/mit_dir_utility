@@ -16,14 +16,14 @@ class SignatureListEntryModule extends StatelessWidget {
         runtimeLoggingService.appendLog('Pressed InkWell');
       },
       child: Ink(
-        width: 20,
+        width: 40,
         height: 40,
         decoration: BoxDecoration(
             color: signatureExists ? Colors.green[900] : Colors.red[900],
             border: Border.all(width: 1.5),
             borderRadius: BorderRadius.circular(5)),
              
-        child: FittedBox(child: const Center(child: Icon(Icons.no_sim_outlined, color: Colors.black,))),
+        child: const FittedBox(child: Center(child: Icon(Icons.no_sim_outlined, color: Colors.black,))),
       ),
     );
   }

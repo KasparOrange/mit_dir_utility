@@ -11,6 +11,7 @@ import 'package:mit_dir_utility/modules/user_editor_module.dart';
 import 'package:mit_dir_utility/services/database_service.dart';
 import 'package:mit_dir_utility/services/runtime_logging_service.dart';
 import 'package:provider/provider.dart';
+import 'package:table_sticky_headers/table_sticky_headers.dart';
 
 class DatabaseView extends StatelessWidget {
   const DatabaseView({super.key});
@@ -21,15 +22,17 @@ class DatabaseView extends StatelessWidget {
     );
   }
 
-  Widget _tableCellTitle(String title) {
-    return Text(
-      '$title: ',
-      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+  DataCell _tableCellTitle(String title) {
+    return DataCell(
+      Text(
+        '$title: ',
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      ),
     );
   }
 
-  Widget _tableCellEntry(String entry, double width) {
-    return SizedBox(width: width, child: Text(entry));
+  DataCell _tableCellEntry(String entry, double width) {
+    return DataCell(SizedBox(width: width, child: Text(entry)));
   }
 
   Widget _tableCellName(String firstName, String lastName) {
@@ -67,68 +70,128 @@ class DatabaseView extends StatelessWidget {
               return const LoadingModule.fullScreen();
             }
 
-            return Column(children: [
-              ConstrainedBox(
-                constraints:
-                    BoxConstraints.expand(height: MediaQuery.of(context).size.height * 0.7),
-                child: ListView(
-                    children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                  return  
-                  ListTile(
-                      shape: const Border.symmetric(horizontal: BorderSide()),
-                      leading: _tableCellName(data['firstName'], data['lastName']),
-                      title: SizedBox(
-                          height: 40,
-                          width: 100,
-                          child: Center(
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: [
-                                _tableCellTitle('Email'),
-                                _tableCellEntry(data['email'], 200),
-                                _tableCellSpace(10),
-                                _tableCellTitle('Phone'),
-                                _tableCellEntry(data['phone'], 200),
-                                _tableCellSpace(10),
-                                _tableCellTitle('Date of Birth'),
-                                _tableCellEntry(
-                                    (data['dateOfBirth'] as Timestamp)
-                                        .toDate()
-                                        .format(EuropeanDateFormats.shortHyphenated),
-                                    100),
-                                _tableCellSpace(10),
-                                SizedBox(
-                                  width: 20,
-                                  child: FutureBuilder(
-                                      future: DatabaseService.checkSignatureExsistsInFBStorage(
-                                          data['uid']),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasError) {
-                                          return Text(snapshot.error.toString());
-                                        }
-                                        if (snapshot.connectionState == ConnectionState.waiting) {
-                                          return const LoadingModule();
-                                        }
-                                        return SignatureListEntryModule(
-                                            signatureExists: snapshot.data!);
-                                      }),
-                                ),
-                                _tableCellSpace(10),
-                                _tableCellTitle('Creation Time'),
-                                _tableCellEntry(
-                                    (data['creationTime'] as Timestamp).toDate().format(), 100),
-                                _tableCellSpace(10),
-                                _tableCellTitle('Last Update'),
-                                _tableCellEntry(
-                                    (data['lastUpdate'] as Timestamp).toDate().format(), 100)
-                              ],
-                            ),
-                          )),
-                      // subtitle: Text('UID: ${data['uid']}'),
-                      trailing: UserDropdownModule(user: UserModel.fromMap(map: data)));
-                }).toList()),
+            final people = snapshot.data!.docs.map((document) => document.data() as Map<String, dynamic>).toList();
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              
+              
+              children: [
+              SizedBox(
+                width: 1000,
+                height: 1000,
+                child: StickyHeadersTable(
+                  columnsLength: people.length,
+                  rowsLength: people.length,
+                  // columnsTitleBuilder: (i) => Text('${people[i]['firstName']} ${people[i]['lastName']}'),
+                  columnsTitleBuilder: (i) =>
+                      Text(i.toString()),
+                  rowsTitleBuilder: (i) => Text(i.toString()),
+                  contentCellBuilder: (i, j) => Text(i.toString() + j.toString()),
+                  legendCell: Text('Sticky Legend'),
+                ),
               ),
+            //   ConstrainedBox(
+            //     constraints:
+            //         BoxConstraints.expand(height: MediaQuery.of(context).size.height * 0.7),
+            //     child: DataTable(
+            //         columns: const <DataColumn>[
+            //           DataColumn(
+            //             label: Text(
+            //               'Column A',
+            //               style: TextStyle(fontStyle: FontStyle.italic),
+            //             ),
+            //           ),
+            //           DataColumn(
+            //             label: Text(
+            //               'Column B',
+            //               style: TextStyle(fontStyle: FontStyle.italic),
+            //             ),
+            //           ),
+            //           DataColumn(
+            //             label: Text(
+            //               'Column C',
+            //               style: TextStyle(fontStyle: FontStyle.italic),
+            //             ),
+            //           ),
+            //           DataColumn(
+            //             label: Text(
+            //               'Column A',
+            //               style: TextStyle(fontStyle: FontStyle.italic),
+            //             ),
+            //           ),
+            //           DataColumn(
+            //             label: Text(
+            //               'Column B',
+            //               style: TextStyle(fontStyle: FontStyle.italic),
+            //             ),
+            //           ),
+            //           DataColumn(
+            //               label: Text(
+            //             'Column C',
+            //             style: TextStyle(fontStyle: FontStyle.italic),
+            //           )),
+            //           // Add more columns as needed
+            //         ],
+            //         rows: snapshot.data!.docs.map(
+            //           (DocumentSnapshot document) {
+            //             Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+            //             return DataRow(
+            //               // shape: const Border.symmetric(horizontal: BorderSide()),
+            //               // leading: _tableCellName(data['firstName'], data['lastName']),
+            //               // title: SizedBox(
+            //               //     height: 40,
+            //               //     width: 100,
+            //               //     child: Center(
+            //               cells: [
+            //                 // _tableCellTitle('Email'),
+            //                 _tableCellEntry(data['email'], 200),
+            //                 // _tableCellSpace(10),
+            //                 // _tableCellTitle('Phone'),
+            //                 _tableCellEntry(data['phone'], 200),
+            //                 // _tableCellSpace(10),
+            //                 // _tableCellTitle('Date of Birth'),
+            //                 _tableCellEntry(
+            //                     (data['dateOfBirth'] as Timestamp)
+            //                         .toDate()
+            //                         .format(EuropeanDateFormats.shortHyphenated),
+            //                     100),
+            //                 // _tableCellSpace(10),
+            //                 DataCell(
+            //                   SizedBox(
+            //                     // width: 20,
+            //                     child: FutureBuilder(
+            //                         future:
+            //                             DatabaseService.checkSignatureExsistsInFBStorage(
+            //                                 data['uid']),
+            //                         builder: (context, snapshot) {
+            //                           if (snapshot.hasError) {
+            //                             return Text(snapshot.error.toString());
+            //                           }
+            //                           if (snapshot.connectionState ==
+            //                               ConnectionState.waiting) {
+            //                             return const LoadingModule();
+            //                           }
+            //                           return SignatureListEntryModule(
+            //                               signatureExists: snapshot.data!);
+            //                         }),
+            //                   ),
+            //                 ),
+            //                 // _tableCellSpace(10),
+            //                 // _tableCellTitle('Creation Time'),
+            //                 _tableCellEntry(
+            //                     (data['creationTime'] as Timestamp).toDate().format(), 100),
+            //                 // _tableCellSpace(10),
+            //                 // _tableCellTitle('Last Update'),
+            //                 _tableCellEntry(
+            //                     (data['lastUpdate'] as Timestamp).toDate().format(), 100)
+            //               ],
+            //             );
+            //           },
+            //         ).toList()),
+            //   ),
               ElevatedButton(
                 child: const Text('Add Person'),
                 onPressed: () {
@@ -137,12 +200,7 @@ class DatabaseView extends StatelessWidget {
                       builder: (context) {
                         return Material(child: UserEditorModule(user: UserModel.empty()));
                       });
-                  Provider.of<RuntimeLoggingService>(context, listen: false).appendLog('Test');
-                  // final user = UserModel.incomplete(
-                  //     firstName: 'Tom',
-                  //     lastName: 'Tester',
-                  //     uid: (Random().nextInt(9000) + 1000).toString());
-                  // await DatabaseService.createPersonInFBFirestore(user: user);
+                  // Provider.of<RuntimeLoggingService>(context, listen: false).appendLog('Test');
                 },
               )
             ]);

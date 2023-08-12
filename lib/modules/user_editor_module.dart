@@ -8,6 +8,7 @@ import 'package:mit_dir_utility/services/database_service.dart';
 
 class UserEditorModule extends StatefulWidget {
   const UserEditorModule({super.key, required this.user});
+
   final UserModel user;
 
   @override
@@ -15,14 +16,26 @@ class UserEditorModule extends StatefulWidget {
 }
 
 class _UserEditorModuleState extends State<UserEditorModule> {
-  final _userEditorFormStateGK = GlobalKey<FormState>();
-
-  late final UserModel user = widget.user;
-
   final decoration = BoxDecoration(
     border: Border.all(width: 4),
     shape: BoxShape.rectangle,
     borderRadius: const BorderRadius.all(Radius.circular(5)),
+  );
+
+  late final UserModel user = widget.user;
+
+  late final _formFieldDateOfBirth = DateTimeFormField(
+    initialValue: user.dateOfBirth,
+    decoration:
+        const InputDecoration(labelText: "Date of Birth", prefixIcon: Icon(Icons.date_range)),
+    mode: DateTimeFieldPickerMode.date,
+    initialEntryMode: DatePickerEntryMode.input,
+    initialDate: user.dateOfBirth,
+    onDateSelected: (value) {
+      setState(() {
+        user.dateOfBirth = value;
+      });
+    },
   );
 
   late final _formFieldEmail = TextFormField(
@@ -33,16 +46,6 @@ class _UserEditorModuleState extends State<UserEditorModule> {
       onChanged: (value) {
         setState(() => user.email = value);
       });
-
-  late final _fromFieldPhone = TextFormField(
-    autovalidateMode: AutovalidateMode.onUserInteraction,
-      initialValue: user.phone,
-      decoration: const InputDecoration(labelText: "Phone", prefixIcon: Icon(Icons.phone)),
-      // validator: (value) => AuthenticationService.validateEmail(value), //TODO: Make validator for Phone.
-      onChanged: (value) {
-        setState(() => user.phone = value);
-      }
-  );
 
   late final _formFieldFirstName = SizedBox(
     width: 400,
@@ -68,24 +71,22 @@ class _UserEditorModuleState extends State<UserEditorModule> {
         }),
   );
 
-  late final _formFieldDateOfBirth = DateTimeFormField(
-    initialValue: user.dateOfBirth,
-    decoration:
-        const InputDecoration(labelText: "Date of Birth", prefixIcon: Icon(Icons.date_range)),
-    mode: DateTimeFieldPickerMode.date,
-    initialEntryMode: DatePickerEntryMode.input,
-    initialDate: user.dateOfBirth,
-    onDateSelected: (value) {
-      setState(() {
-        user.dateOfBirth = value;
+  late final _fromFieldPhone = TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      initialValue: user.phone,
+      decoration: const InputDecoration(labelText: "Phone", prefixIcon: Icon(Icons.phone)),
+      // validator: (value) => AuthenticationService.validateEmail(value), //TODO: Make validator for Phone.
+      onChanged: (value) {
+        setState(() => user.phone = value);
       });
-    },
-  );
+
+  final _userEditorFormStateGK = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Material(
       child: Container(
+        padding: const EdgeInsets.all(50),
         width: 1000,
         height: 1000,
         decoration: decoration,
@@ -93,25 +94,34 @@ class _UserEditorModuleState extends State<UserEditorModule> {
             key: _userEditorFormStateGK,
             child: Column(
               children: <Widget>[
-                const SizedBox(
-                  height: 20,
-                ),
-                _formFieldEmail,
-                const SizedBox(
-                  height: 20,
-                ),
                 Row(
                   children: [_formFieldFirstName, _formFieldLastName],
                 ),
                 const SizedBox(height: 20),
+                _formFieldEmail,
+                const SizedBox(height: 20),
+                _fromFieldPhone,
+                const SizedBox(height: 20),
+
+                const SizedBox(height: 20),
                 _formFieldDateOfBirth,
                 const SizedBox(height: 20),
-                ElevatedButton(
-                    onPressed: () {
-                      GoRouter.of(context).pop();
-                      // DatabaseService.
-                    },
-                    child: Text('Save')),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                        onPressed: () {
+                          GoRouter.of(context).pop();
+                          DatabaseService.createPersonInFBFireStore(user: user);
+                        },
+                        child: const Text('Save')),
+                    ElevatedButton(
+                        onPressed: () {
+                          GoRouter.of(context).pop();
+                        },
+                        child: const Text('Back')),
+                  ],
+                ),
                 // Text(
                 //   // error,
                 //   'Error Placeholder',

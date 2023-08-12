@@ -54,6 +54,10 @@ class DatabaseService {
       return Future.error('User does not exsist in FireStore database!');
     }
   }
+
+  static Future createPersonInFBFireStore({required UserModel user}) async {
+    return await ffi.collection('people').doc(user.uid).set(user.asMap); 
+  }
   //   Future _uploadImageToFBStorage(String name, Uint8List bytes) async {
   //   final randomNumber = Random().nextInt(9000) + 1000;
 
