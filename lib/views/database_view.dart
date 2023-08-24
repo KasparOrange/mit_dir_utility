@@ -48,6 +48,10 @@ class DatabaseView extends StatelessWidget {
     );
   }
 
+  // const headers = {
+  //   1: 'First Name',
+  // };
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -70,140 +74,146 @@ class DatabaseView extends StatelessWidget {
               return const LoadingModule.fullScreen();
             }
 
-            final people = snapshot.data!.docs.map((document) => document.data() as Map<String, dynamic>).toList();
+            final people = snapshot.data!.docs
+                .map((document) => document.data() as Map<String, dynamic>)
+                .map((map) => UserModel.fromMap(map: map))
+                .toList();
+
+            const collumnsToShow = 5;
 
             return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              
-              
-              children: [
-              SizedBox(
-                width: 1000,
-                height: 1000,
-                child: StickyHeadersTable(
-                  columnsLength: people.length,
-                  rowsLength: people.length,
-                  // columnsTitleBuilder: (i) => Text('${people[i]['firstName']} ${people[i]['lastName']}'),
-                  columnsTitleBuilder: (i) =>
-                      Text(i.toString()),
-                  rowsTitleBuilder: (i) => Text(i.toString()),
-                  contentCellBuilder: (i, j) => Text(i.toString() + j.toString()),
-                  legendCell: Text('Sticky Legend'),
-                ),
-              ),
-            //   ConstrainedBox(
-            //     constraints:
-            //         BoxConstraints.expand(height: MediaQuery.of(context).size.height * 0.7),
-            //     child: DataTable(
-            //         columns: const <DataColumn>[
-            //           DataColumn(
-            //             label: Text(
-            //               'Column A',
-            //               style: TextStyle(fontStyle: FontStyle.italic),
-            //             ),
-            //           ),
-            //           DataColumn(
-            //             label: Text(
-            //               'Column B',
-            //               style: TextStyle(fontStyle: FontStyle.italic),
-            //             ),
-            //           ),
-            //           DataColumn(
-            //             label: Text(
-            //               'Column C',
-            //               style: TextStyle(fontStyle: FontStyle.italic),
-            //             ),
-            //           ),
-            //           DataColumn(
-            //             label: Text(
-            //               'Column A',
-            //               style: TextStyle(fontStyle: FontStyle.italic),
-            //             ),
-            //           ),
-            //           DataColumn(
-            //             label: Text(
-            //               'Column B',
-            //               style: TextStyle(fontStyle: FontStyle.italic),
-            //             ),
-            //           ),
-            //           DataColumn(
-            //               label: Text(
-            //             'Column C',
-            //             style: TextStyle(fontStyle: FontStyle.italic),
-            //           )),
-            //           // Add more columns as needed
-            //         ],
-            //         rows: snapshot.data!.docs.map(
-            //           (DocumentSnapshot document) {
-            //             Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-            //             return DataRow(
-            //               // shape: const Border.symmetric(horizontal: BorderSide()),
-            //               // leading: _tableCellName(data['firstName'], data['lastName']),
-            //               // title: SizedBox(
-            //               //     height: 40,
-            //               //     width: 100,
-            //               //     child: Center(
-            //               cells: [
-            //                 // _tableCellTitle('Email'),
-            //                 _tableCellEntry(data['email'], 200),
-            //                 // _tableCellSpace(10),
-            //                 // _tableCellTitle('Phone'),
-            //                 _tableCellEntry(data['phone'], 200),
-            //                 // _tableCellSpace(10),
-            //                 // _tableCellTitle('Date of Birth'),
-            //                 _tableCellEntry(
-            //                     (data['dateOfBirth'] as Timestamp)
-            //                         .toDate()
-            //                         .format(EuropeanDateFormats.shortHyphenated),
-            //                     100),
-            //                 // _tableCellSpace(10),
-            //                 DataCell(
-            //                   SizedBox(
-            //                     // width: 20,
-            //                     child: FutureBuilder(
-            //                         future:
-            //                             DatabaseService.checkSignatureExsistsInFBStorage(
-            //                                 data['uid']),
-            //                         builder: (context, snapshot) {
-            //                           if (snapshot.hasError) {
-            //                             return Text(snapshot.error.toString());
-            //                           }
-            //                           if (snapshot.connectionState ==
-            //                               ConnectionState.waiting) {
-            //                             return const LoadingModule();
-            //                           }
-            //                           return SignatureListEntryModule(
-            //                               signatureExists: snapshot.data!);
-            //                         }),
-            //                   ),
-            //                 ),
-            //                 // _tableCellSpace(10),
-            //                 // _tableCellTitle('Creation Time'),
-            //                 _tableCellEntry(
-            //                     (data['creationTime'] as Timestamp).toDate().format(), 100),
-            //                 // _tableCellSpace(10),
-            //                 // _tableCellTitle('Last Update'),
-            //                 _tableCellEntry(
-            //                     (data['lastUpdate'] as Timestamp).toDate().format(), 100)
-            //               ],
-            //             );
-            //           },
-            //         ).toList()),
-            //   ),
-              ElevatedButton(
-                child: const Text('Add Person'),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Material(child: UserEditorModule(user: UserModel.empty()));
-                      });
-                  // Provider.of<RuntimeLoggingService>(context, listen: false).appendLog('Test');
-                },
-              )
-            ]);
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Flexible(
+                    fit: FlexFit.loose,
+                    child: StickyHeadersTable(
+                      columnsLength: collumnsToShow,
+                      rowsLength: people.length,
+                      // columnsTitleBuilder: (i) => Text('${people[i]['firstName']} ${people[i]['lastName']}'),
+                      columnsTitleBuilder: (i) => Text(i.toString()),
+
+                      rowsTitleBuilder: (i) => switch (i) {
+                        0 => Text('First Name'),
+                        _ => Text('ERROR'),
+                      },//Text('${people[i].firstName} ${people[i].lastName}'),
+                      contentCellBuilder: (i, j) => Text(people[0].firstName),
+                      legendCell: Text('Sticky Legend'),
+                    ),
+                  ),
+
+                  //   ConstrainedBox(
+                  //     constraints:
+                  //         BoxConstraints.expand(height: MediaQuery.of(context).size.height * 0.7),
+                  //     child: DataTable(
+                  //         columns: const <DataColumn>[
+                  //           DataColumn(
+                  //             label: Text(
+                  //               'Column A',
+                  //               style: TextStyle(fontStyle: FontStyle.italic),
+                  //             ),
+                  //           ),
+                  //           DataColumn(
+                  //             label: Text(
+                  //               'Column B',
+                  //               style: TextStyle(fontStyle: FontStyle.italic),
+                  //             ),
+                  //           ),
+                  //           DataColumn(
+                  //             label: Text(
+                  //               'Column C',
+                  //               style: TextStyle(fontStyle: FontStyle.italic),
+                  //             ),
+                  //           ),
+                  //           DataColumn(
+                  //             label: Text(
+                  //               'Column A',
+                  //               style: TextStyle(fontStyle: FontStyle.italic),
+                  //             ),
+                  //           ),
+                  //           DataColumn(
+                  //             label: Text(
+                  //               'Column B',
+                  //               style: TextStyle(fontStyle: FontStyle.italic),
+                  //             ),
+                  //           ),
+                  //           DataColumn(
+                  //               label: Text(
+                  //             'Column C',
+                  //             style: TextStyle(fontStyle: FontStyle.italic),
+                  //           )),
+                  //           // Add more columns as needed
+                  //         ],
+                  //         rows: snapshot.data!.docs.map(
+                  //           (DocumentSnapshot document) {
+                  //             Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                  //             return DataRow(
+                  //               // shape: const Border.symmetric(horizontal: BorderSide()),
+                  //               // leading: _tableCellName(data['firstName'], data['lastName']),
+                  //               // title: SizedBox(
+                  //               //     height: 40,
+                  //               //     width: 100,
+                  //               //     child: Center(
+                  //               cells: [
+                  //                 // _tableCellTitle('Email'),
+                  //                 _tableCellEntry(data['email'], 200),
+                  //                 // _tableCellSpace(10),
+                  //                 // _tableCellTitle('Phone'),
+                  //                 _tableCellEntry(data['phone'], 200),
+                  //                 // _tableCellSpace(10),
+                  //                 // _tableCellTitle('Date of Birth'),
+                  //                 _tableCellEntry(
+                  //                     (data['dateOfBirth'] as Timestamp)
+                  //                         .toDate()
+                  //                         .format(EuropeanDateFormats.shortHyphenated),
+                  //                     100),
+                  //                 // _tableCellSpace(10),
+                  //                 DataCell(
+                  //                   SizedBox(
+                  //                     // width: 20,
+                  //                     child: FutureBuilder(
+                  //                         future:
+                  //                             DatabaseService.checkSignatureExsistsInFBStorage(
+                  //                                 data['uid']),
+                  //                         builder: (context, snapshot) {
+                  //                           if (snapshot.hasError) {
+                  //                             return Text(snapshot.error.toString());
+                  //                           }
+                  //                           if (snapshot.connectionState ==
+                  //                               ConnectionState.waiting) {
+                  //                             return const LoadingModule();
+                  //                           }
+                  //                           return SignatureListEntryModule(
+                  //                               signatureExists: snapshot.data!);
+                  //                         }),
+                  //                   ),
+                  //                 ),
+                  //                 // _tableCellSpace(10),
+                  //                 // _tableCellTitle('Creation Time'),
+                  //                 _tableCellEntry(
+                  //                     (data['creationTime'] as Timestamp).toDate().format(), 100),
+                  //                 // _tableCellSpace(10),
+                  //                 // _tableCellTitle('Last Update'),
+                  //                 _tableCellEntry(
+                  //                     (data['lastUpdate'] as Timestamp).toDate().format(), 100)
+                  //               ],
+                  //             );
+                  //           },
+                  //         ).toList()),
+                  //   ),
+                  ElevatedButton(
+                    child: const Text('Add Person'),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Material(child: UserEditorModule(user: UserModel.empty()));
+                          });
+                      // Provider.of<RuntimeLoggingService>(context, listen: false).appendLog('Test');
+                    },
+                  )
+                ]);
           }),
     );
   }

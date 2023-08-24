@@ -11,6 +11,7 @@ import firebase_core
 import firebase_storage
 import flutter_barcode_sdk
 import pasteboard
+import rive_common
 import validation_pro
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
@@ -20,5 +21,6 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FLTFirebaseStoragePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseStoragePlugin"))
   FlutterBarcodeSdkPlugin.register(with: registry.registrar(forPlugin: "FlutterBarcodeSdkPlugin"))
   PasteboardPlugin.register(with: registry.registrar(forPlugin: "PasteboardPlugin"))
+  RivePlugin.register(with: registry.registrar(forPlugin: "RivePlugin"))
   ValidationProPlugin.register(with: registry.registrar(forPlugin: "ValidationProPlugin"))
 }

@@ -6,6 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   flutter_barcode_sdk
   pasteboard
+  rive_common
   validation_pro
 )
 

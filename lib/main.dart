@@ -20,11 +20,11 @@ void main() async {
 
   // await FirebaseAuth.instance.signInAnonymously();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();

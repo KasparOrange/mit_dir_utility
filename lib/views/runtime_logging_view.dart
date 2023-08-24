@@ -8,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
+import 'package:mit_dir_utility/modules/rive_test_animation.dart';
 import 'package:mit_dir_utility/services/runtime_logging_service.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
@@ -114,7 +115,8 @@ class _RuntimeLoggingViewState extends State<RuntimeLoggingView> {
                 },
                 child: Text('Scan QR Code'))
           ],
-        )
+        ),
+          Expanded(child: const RiveTestAnimation.fullScreen())
       ],
     );
   }

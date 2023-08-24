@@ -148,19 +148,18 @@ class _SuperViewState extends State<SuperView> {
                   backgroundBlendMode: BlendMode.darken),
             ),
             ListView(
-                controller: routingService.scrollController,
+                controller: routingService.scrollController, 
                 addSemanticIndexes: true,
                 addAutomaticKeepAlives: true,
                 addRepaintBoundaries: true,
                 children: [
-                  Container(
-                    height: 500,
-                    child: widget.child,
-                    // NOTE: Comes from: file:///C:/SELF/Code/flutter/flutterapp/lib/services/route_service.dart
-                  ),
+                        SizedBox(
+                          height: 1000,
+                          child: widget.child),
                   Container(
                     color: Colors.amber,
                     height: 200,
+                    child: const Center(child: Text("This is a placeholder for the impressum.")),
                   ),
                 ]),
           ]),

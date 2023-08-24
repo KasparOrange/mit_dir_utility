@@ -9,6 +9,7 @@
 #include <firebase_core/firebase_core_plugin_c_api.h>
 #include <flutter_barcode_sdk/flutter_barcode_sdk_plugin.h>
 #include <pasteboard/pasteboard_plugin.h>
+#include <rive_common/rive_plugin.h>
 #include <validation_pro/validation_pro_plugin_c_api.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
@@ -18,6 +19,8 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("FlutterBarcodeSdkPlugin"));
   PasteboardPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("PasteboardPlugin"));
+  RivePluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("RivePlugin"));
   ValidationProPluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("ValidationProPluginCApi"));
 }
