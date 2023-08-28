@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:quill_html_editor/quill_html_editor.dart';
@@ -43,16 +45,64 @@ class _QuillModuleState extends State<QuillModule> {
       const TextStyle(fontSize: 18, color: Colors.black12, fontWeight: FontWeight.normal);
 
   bool _hasFocus = false;
-  
+
+  Widget _htmlSizeInMBTextWidget =
+      Text('Size: 0.000000MB', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20));
+
+  Widget _buildHtmlSizeInMBText(String htmlString) {
+    Uint8List bytes = utf8.encode(htmlString) as Uint8List;
+
+    var size = bytes.length / (1024 * 1024);
+
+    var color = Colors.black;
+
+    TextStyle style = TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: color);
+
+    if (size >= 0.85) {
+      color = Colors.orange;
+      debugPrint('Orange');
+    }
+
+    if (size >= 0.99) {
+      color = Colors.red;
+    }
+
+    return Row(
+      children: [
+        Text('Size: ', style: style),
+        Text(size.toStringAsFixed(6), style: style.copyWith(color: color)),
+        Text('MB', style: style),
+      ],
+    );
+  }
+
+  late Timer _sizeCountingTimer;
+
   @override
   void initState() {
     controller = QuillEditorController();
-    controller.onTextChanged((text) {
-      debugPrint('listening to $text');
-    });
+
+    // controller.onTextChanged((text) {
+    //   // debugPrint('listening to $text');
+    //   // debugPrint(_countHtmlSizeInMB(text).toString());
+    //   setState(() {
+    //     _htmlSizeInMB = _countHtmlSizeInMB(text);
+    //   });
+    // });
     controller.onEditorLoaded(() {
       debugPrint('Editor Loaded :)');
     });
+
+    _sizeCountingTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+      final text = await controller.getText();
+
+      debugPrint('Printing HtmlSizeInMB.');
+
+      setState(() {
+        _htmlSizeInMBTextWidget = _buildHtmlSizeInMBText(text);
+      });
+    });
+
     super.initState();
   }
 
@@ -60,6 +110,7 @@ class _QuillModuleState extends State<QuillModule> {
   void dispose() {
     /// please do not forget to dispose the controller
     controller.dispose();
+    _sizeCountingTimer.cancel();
     super.dispose();
   }
 
@@ -105,6 +156,7 @@ class _QuillModuleState extends State<QuillModule> {
                       Icons.add_circle,
                       color: Colors.black,
                     )),
+                _htmlSizeInMBTextWidget,
               ],
             ),
             Expanded(
@@ -259,6 +311,7 @@ class _QuillModuleState extends State<QuillModule> {
   void getHtmlText() async {
     String? htmlText = await controller.getText();
     debugPrint(htmlText);
+    debugPrint('Length of the string is: ${htmlText.length.toString()}');
   }
 
   ///[setHtmlText] to set the html text to editor

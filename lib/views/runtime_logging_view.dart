@@ -120,7 +120,7 @@ class _RuntimeLoggingViewState extends State<RuntimeLoggingView> {
         // ),
         //   Expanded(child: const RiveTestAnimation.fullScreen()),
           SizedBox(
-            height: 1000,
+            height: 500,
             width: 1000,
             child: const QuillModule()),
       ],
