@@ -154,7 +154,7 @@ class _SuperViewState extends State<SuperView> {
                 addRepaintBoundaries: true,
                 children: [
                         SizedBox(
-                          height: 1000,
+                          height: 2000,
                           child: widget.child),
                   Container(
                     color: Colors.amber,

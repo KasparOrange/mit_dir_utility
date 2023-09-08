@@ -58,6 +58,7 @@ dependencies:
   table_sticky_headers: ^2.0.5
   rive: ^0.11.14
   quill_html_editor: ^2.2.5
+  flutter_html: ^3.0.0-beta.2
 
 dev_dependencies:
   flutter_test:

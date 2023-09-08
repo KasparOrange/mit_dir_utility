@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:mit_dir_utility/modules/quill_resizing_image_module.dart';
 import 'package:quill_html_editor/quill_html_editor.dart';
 
 void main() async {
@@ -47,7 +50,9 @@ class _QuillModuleState extends State<QuillModule> {
   bool _hasFocus = false;
 
   Widget _htmlSizeInMBTextWidget =
-      Text('Size: 0.000000MB', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20));
+      const Text('Size: 0.000000MB', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20));
+
+  String _htmlText = '';
 
   Widget _buildHtmlSizeInMBText(String htmlString) {
     Uint8List bytes = utf8.encode(htmlString) as Uint8List;
@@ -76,32 +81,85 @@ class _QuillModuleState extends State<QuillModule> {
     );
   }
 
+  Widget _buildImageResizingButton() {
+    onPressed() async {
+      String selectedHtmlText = await controller.getSelectedHtmlText();
+
+      if (selectedHtmlText.startsWith('<p><img')) {
+        debugPrint('Its an Image!');
+
+        // var selectionIndex = await controller.getSelectionRange().then(
+        //       (value) => value.index,
+        //     );
+
+        String completeHtmlText = await controller.getText();
+
+        var selectionIndex = completeHtmlText.indexOf(selectedHtmlText.substring(3));
+
+        if (selectionIndex == -1) {
+          debugPrint('selectedHtmlText');
+          debugPrint(selectedHtmlText.substring(3).substring(0, 100));
+          debugPrint('completeHtmlText');
+          debugPrint(completeHtmlText.substring(0, 100));
+          debugPrint('Selectionindex was: $selectionIndex');
+
+          return;
+        }
+        debugPrint('Selectionindex is: $selectionIndex');
+
+        String s1 = completeHtmlText.substring(0, selectionIndex + 5);
+        String s2 = completeHtmlText.substring(selectionIndex);
+
+        String newHtml = '$s1 height="100" $s2';
+
+        // controller.replaceText(newHtml);
+
+        controller.setText(newHtml);
+
+        // controller.insertText(text)
+      } else {
+        debugPrint('No Image selecetd!');
+      }
+    }
+
+    return Row(
+      children: [
+        SizedBox(height: 20, width: 100, child: const TextField()),
+        TextButton(onPressed: onPressed, child: Text('Resize Image')),
+      ],
+    );
+  }
+
   late Timer _sizeCountingTimer;
 
   @override
   void initState() {
     controller = QuillEditorController();
 
-    // controller.onTextChanged((text) {
-    //   // debugPrint('listening to $text');
-    //   // debugPrint(_countHtmlSizeInMB(text).toString());
-    //   setState(() {
-    //     _htmlSizeInMB = _countHtmlSizeInMB(text);
-    //   });
-    // });
+    controller.onTextChanged((text) async {
+      // debugPrint('listening to $text');
+      // debugPrint(_countHtmlSizeInMB(text).toString());
+
+      // var newHtml = await controller.getText();
+
+      setState(() {
+        _htmlSizeInMBTextWidget = _buildHtmlSizeInMBText(text);
+        _htmlText = text;
+      });
+    });
     controller.onEditorLoaded(() {
       debugPrint('Editor Loaded :)');
     });
 
-    _sizeCountingTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
-      final text = await controller.getText();
+    // _sizeCountingTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+    //   final text = await controller.getText();
 
-      debugPrint('Printing HtmlSizeInMB.');
+    //   debugPrint('Printing HtmlSizeInMB.');
 
-      setState(() {
-        _htmlSizeInMBTextWidget = _buildHtmlSizeInMBText(text);
-      });
-    });
+    //   setState(() {
+    //     _htmlSizeInMBTextWidget = _buildHtmlSizeInMBText(text);
+    //   });
+    // });
 
     super.initState();
   }
@@ -116,176 +174,119 @@ class _QuillModuleState extends State<QuillModule> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        resizeToAvoidBottomInset: true,
-        body: Column(
-          children: [
-            ToolBar(
-              toolBarColor: _toolbarColor,
-              padding: const EdgeInsets.all(8),
-              iconSize: 25,
-              iconColor: _toolbarIconColor,
-              activeIconColor: Colors.greenAccent.shade400,
-              controller: controller,
-              crossAxisAlignment: WrapCrossAlignment.start,
-              direction: Axis.horizontal,
-              customButtons: [
-                Container(
-                  width: 25,
-                  height: 25,
-                  decoration: BoxDecoration(
-                      color: _hasFocus ? Colors.green : Colors.grey,
-                      borderRadius: BorderRadius.circular(15)),
-                ),
-                InkWell(
-                    onTap: () => unFocusEditor(),
-                    child: const Icon(
-                      Icons.favorite,
-                      color: Colors.black,
-                    )),
-                InkWell(
-                    onTap: () async {
-                      var selectedText = await controller.getSelectedText();
-                      debugPrint('selectedText $selectedText');
-                      var selectedHtmlText = await controller.getSelectedHtmlText();
-                      debugPrint('selectedHtmlText $selectedHtmlText');
-                    },
-                    child: const Icon(
-                      Icons.add_circle,
-                      color: Colors.black,
-                    )),
-                _htmlSizeInMBTextWidget,
-              ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Material(
+        borderOnForeground: true,
+        child: Container(
+          // clipBehavior: Clip.hardEdge,
+          foregroundDecoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.amber,
+              width: 5,
+              style: BorderStyle.solid,
             ),
-            Expanded(
-              child: QuillHtmlEditor(
-                text: "<h1>Hello</h1>This is a quill html editor example 😊",
-                hintText: 'Hint text goes here',
-                controller: controller,
-                isEnabled: true,
-                ensureVisible: false,
-                minHeight: 500,
-                autoFocus: false,
-                textStyle: _editorTextStyle,
-                hintTextStyle: _hintTextStyle,
-                hintTextAlign: TextAlign.start,
-                padding: const EdgeInsets.only(left: 10, top: 10),
-                hintTextPadding: const EdgeInsets.only(left: 20),
-                backgroundColor: _backgroundColor,
-                inputAction: InputAction.newline,
-                onEditingComplete: (s) => debugPrint('Editing completed $s'),
-                loadingBuilder: (context) {
-                  return const Center(
-                      child: CircularProgressIndicator(
-                    strokeWidth: 1,
-                    color: Colors.red,
-                  ));
-                },
-                onFocusChanged: (focus) {
-                  debugPrint('has focus $focus');
-                  setState(() {
-                    _hasFocus = focus;
-                  });
-                },
-                onTextChanged: (text) => debugPrint('widget text change $text'),
-                onEditorCreated: () {
-                  debugPrint('Editor has been loaded');
-                  setHtmlText('Testing text on load');
-                },
-                onEditorResized: (height) => debugPrint('Editor resized $height'),
-                onSelectionChanged: (sel) => debugPrint('index ${sel.index}, range ${sel.length}'),
-              ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: Container(
-          width: double.maxFinite,
-          color: _toolbarColor,
-          padding: const EdgeInsets.all(8),
-          child: Wrap(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
             children: [
-              textButton(
-                  text: 'Set Text',
-                  onPressed: () {
-                    setHtmlText('This text is set by you 🫵');
-                  }),
-              textButton(
-                  text: 'Get Text',
-                  onPressed: () {
-                    getHtmlText();
-                  }),
-              textButton(
-                  text: 'Insert Video',
-                  onPressed: () {
-                    ////insert
-                    insertVideoURL('https://www.youtube.com/watch?v=4AoFA19gbLo');
-                    insertVideoURL('https://vimeo.com/440421754');
-                    insertVideoURL(
-                        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
-                  }),
-              textButton(
-                  text: 'Insert Image',
-                  onPressed: () {
-                    insertNetworkImage('https://i.imgur.com/0DVAOec.gif');
-                  }),
-              textButton(
-                  text: 'Insert Index',
-                  onPressed: () {
-                    insertHtmlText("This text is set by the insertText method", index: 10);
-                  }),
-              textButton(
-                  text: 'Undo',
-                  onPressed: () {
-                    controller.undo();
-                  }),
-              textButton(
-                  text: 'Redo',
-                  onPressed: () {
-                    controller.redo();
-                  }),
-              textButton(
-                  text: 'Clear History',
+              Padding(
+                padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
+                child: ToolBar(
+                  // clipBehavior: Clip.hardEdge,
+                  toolBarColor: _toolbarColor,
+                  padding: const EdgeInsets.all(8),
+                  iconSize: 25,
+                  iconColor: _toolbarIconColor,
+                  activeIconColor: Colors.green,
+                  controller: controller,
+                  crossAxisAlignment: WrapCrossAlignment.start,
+                  direction: Axis.horizontal,
+                  customButtons: [
+                    Container(
+                      width: 25,
+                      height: 25,
+                      decoration: BoxDecoration(
+                          color: _hasFocus ? Colors.green : Colors.grey,
+                          borderRadius: BorderRadius.circular(15)),
+                    ),
+                    InkWell(
+                        onTap: () => unFocusEditor(),
+                        child: const Icon(
+                          Icons.favorite,
+                          color: Colors.black,
+                        )),
+                    InkWell(
+                        onTap: () async {
+                          var selectedText = await controller.getSelectedText();
+                          debugPrint('selectedText $selectedText');
+                          var selectedHtmlText = await controller.getSelectedHtmlText();
+                          debugPrint('selectedHtmlText $selectedHtmlText');
+                        },
+                        child: const Icon(
+                          Icons.add_circle,
+                          color: Colors.black,
+                        )),
+                    _htmlSizeInMBTextWidget,
+                    _buildImageResizingButton(),
+                    // InkWell(
+                    //   onTap: ,
+                    // )
+
+                    QuillResizingImageModule(quillEditorController: controller),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: QuillHtmlEditor(
+                  text: "<h1>Hello</h1>This is a quill html editor example 😊",
+                  hintText: 'Hint text goes here',
+                  controller: controller,
+                  isEnabled: true,
+                  ensureVisible: false,
+                  minHeight: 500,
+                  autoFocus: true,
+                  textStyle: _editorTextStyle,
+                  hintTextStyle: _hintTextStyle,
+                  hintTextAlign: TextAlign.start,
+                  padding: const EdgeInsets.only(left: 10, top: 10),
+                  hintTextPadding: const EdgeInsets.only(left: 20),
+                  backgroundColor: _backgroundColor,
+                  inputAction: InputAction.newline,
+                  onEditingComplete: (s) => debugPrint('Editing completed $s'),
+                  loadingBuilder: (context) {
+                    return const Center(
+                        child: CircularProgressIndicator(
+                      strokeWidth: 1,
+                      color: Colors.red,
+                    ));
+                  },
+                  onFocusChanged: (focus) {
+                    debugPrint('has focus $focus');
+                    setState(() {
+                      _hasFocus = focus;
+                    });
+                  },
+                  // onTextChanged: (text) => debugPrint('widget text change $text'),
+                  onEditorCreated: () {
+                    debugPrint('Editor has been loaded');
+                    setHtmlText('Testing text on load');
+                  },
+                  onEditorResized: (height) => debugPrint('Editor resized $height'),
+                  onSelectionChanged: (sel) =>
+                      debugPrint('index ${sel.index}, range ${sel.length}'),
+                ),
+              ),
+              // HtmlElementView(viewType: viewType),
+              ElevatedButton(
                   onPressed: () async {
-                    controller.clearHistory();
-                  }),
-              textButton(
-                  text: 'Clear Editor',
-                  onPressed: () {
-                    controller.clear();
-                  }),
-              textButton(
-                  text: 'Get Delta',
-                  onPressed: () async {
-                    var delta = await controller.getDelta();
-                    debugPrint('delta');
-                    debugPrint(jsonEncode(delta));
-                  }),
-              textButton(
-                  text: 'Set Delta',
-                  onPressed: () {
-                    final Map<dynamic, dynamic> deltaMap = {
-                      "ops": [
-                        {
-                          "insert": {
-                            "video":
-                                "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                          }
-                        },
-                        {
-                          "insert": {"video": "https://www.youtube.com/embed/4AoFA19gbLo"}
-                        },
-                        {"insert": "Hello"},
-                        {
-                          "attributes": {"header": 1},
-                          "insert": "\n"
-                        },
-                        {"insert": "You just set the Delta text 😊\n"}
-                      ]
-                    };
-                    controller.setDelta(deltaMap);
-                  }),
+                    final text = await controller.getText();
+                    setState(() {
+                      _htmlText = text;
+                    });
+                  },
+                  child: Text('Refresh HTML')),
+              Html(data: _htmlText),
             ],
           ),
         ),
