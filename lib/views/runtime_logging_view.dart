@@ -51,7 +51,7 @@ class _RuntimeLoggingViewState extends State<RuntimeLoggingView> {
   Widget build(BuildContext context) {
     var logger = Provider.of<RuntimeLoggingService>(context);
 
-    return Column(
+    return const Column(
       children: [
         // ConstrainedBox(
         //   constraints: BoxConstraints.expand(height: MediaQuery.of(context).size.height * 0.5),
@@ -122,7 +122,7 @@ class _RuntimeLoggingViewState extends State<RuntimeLoggingView> {
           SizedBox(
             height: 1500,
             width: 1000,
-            child: const QuillModule()),
+            child: QuillModule()),
       ],
     );
   }
