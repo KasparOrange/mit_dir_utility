@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mit_dir_utility/firebase_options.dart';
 import 'package:flutter/material.dart';
+import 'package:mit_dir_utility/interfaces.dart';
 import 'package:mit_dir_utility/models/user_model.dart';
 import 'package:mit_dir_utility/services/authentication_service.dart';
+import 'package:mit_dir_utility/services/global_state_service.dart';
 import 'package:mit_dir_utility/services/keyboard_service.dart';
 import 'package:mit_dir_utility/services/routing_service.dart';
 import 'package:mit_dir_utility/services/runtime_logging_service.dart';
@@ -18,7 +21,9 @@ void main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // await FirebaseAuth.instance.signInAnonymously();
+  // Set the firebase setting with persistence enabled
+  // TODO: Set the size for the cache
+  FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
 
   runApp(const MyApp());
 }
@@ -37,6 +42,7 @@ class _MyAppState extends State<MyApp> {
   // final _databaseService = DatabaseService();
   final _authService = AuthenticationService();
 
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -50,10 +56,13 @@ class _MyAppState extends State<MyApp> {
         Provider.value(value: _keyboardService),
         // Provider.value(value: _databaseService),
         Provider.value(value: _authService),
+        Provider.value(value: GlobalStateService()),
         // ListenableProvider.value(value: _themeService),
         ChangeNotifierProvider(create: (context) => RuntimeLoggingService()),
+        // ChangeNotifierProvider(create: (context) => SidebarActionsNotifier()),
       ],
       child: Builder(builder: (context) {
+        print('Building MaterialApp');
         // final themeService = Provider.of<ThemeService>(context);
         return MaterialApp.router(
             debugShowCheckedModeBanner: false,
@@ -67,29 +76,5 @@ class _MyAppState extends State<MyApp> {
             ));
       }),
     );
-    // return MaterialApp(
-    //   debugShowCheckedModeBanner: false,
-    //   title: 'Flutter Demo',
-    //   theme: ThemeData(
-    //     colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 185, 124, 3)),
-    //   ),
-    //   routes: {
-    //     '/': (context) => Scaffold(
-    //         // drawer: DrawerView(),
-    //         // appBar: AppBar(),
-
-    //         floatingActionButton: FloatingActionButton.small(
-    //           onPressed: () {
-    //             print('sfsd');
-    //             Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoggingView()));
-    //           },
-    //           child: const Icon(Icons.info_outline),
-    //         ),
-    //         floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
-    //         body: HomeView()),
-    //     '/logs': (context) => LoggingView(),
-    //     '/signIn': (context) => AuthView(),
-    //   },
-    // );
   }
 }

@@ -10,6 +10,9 @@ class DatabaseService {
   static FirebaseFirestore get ffi => FirebaseFirestore.instance;
   static FirebaseStorage get fsi => FirebaseStorage.instance;
 
+  static bool mocking = true;
+  static String get usersCollection => mocking ? 'mockUsers' : 'people';
+
   /// Retrurn the donwload URL of the Signature.
   static Future<String> uploadSignatureToFBStorage(String name, Uint8List bytes) async {
     final randomNumber = Random().nextInt(9000) + 1000; // TODO: Change to Firebase Global ID.
@@ -56,8 +59,23 @@ class DatabaseService {
   }
 
   static Future createPersonInFBFireStore({required UserModel user}) async {
-    return await ffi.collection('people').doc(user.uid).set(user.asMap); 
+    return await ffi.collection('people').doc(user.uid).set(user.asMap);
   }
+
+  static Future createMockUserInFBFireStore({required UserModel user}) async {
+    return await ffi.collection('mockUsers').doc().set(user.asMap);
+  }
+
+  static Stream<List<UserModel>> get userStream => ffi
+      .collection(usersCollection)
+      .snapshots()
+      .map((snapshot) => snapshot.docs.map((doc) => UserModel.fromMap(map: doc.data())).toList());
+
+  static Future<List<UserModel>> get users async {
+    final snapshot = await ffi.collection(usersCollection).get();
+    return snapshot.docs.map((doc) => UserModel.fromMap(map: doc.data())).toList();
+  }   
+
   //   Future _uploadImageToFBStorage(String name, Uint8List bytes) async {
   //   final randomNumber = Random().nextInt(9000) + 1000;
 

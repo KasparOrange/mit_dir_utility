@@ -48,7 +48,7 @@ dependencies:
   provider: ^6.0.5
   flex_color_scheme: ^7.2.0
   file_picker: ^5.3.2
-  csv: ^5.0.2
+  csv: ^5.1.1
   date_field: ^3.0.5
   date_time_format: ^2.0.1
   qr_bar_code_scanner_dialog: ^0.0.5
@@ -59,6 +59,8 @@ dependencies:
   rive: ^0.11.14
   quill_html_editor: ^2.2.5
   flutter_html: ^3.0.0-beta.2
+  rxdart: ^0.27.7
+  syncfusion_flutter_calendar: ^23.1.44
 
 dev_dependencies:
   flutter_test:

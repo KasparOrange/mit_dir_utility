@@ -151,15 +151,15 @@ class _QuillModuleState extends State<QuillModule> {
       debugPrint('Editor Loaded :)');
     });
 
-    // _sizeCountingTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
-    //   final text = await controller.getText();
+    _sizeCountingTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+      final text = await controller.getText();
 
-    //   debugPrint('Printing HtmlSizeInMB.');
+      debugPrint('Printing HtmlSizeInMB.');
 
-    //   setState(() {
-    //     _htmlSizeInMBTextWidget = _buildHtmlSizeInMBText(text);
-    //   });
-    // });
+      setState(() {
+        _htmlSizeInMBTextWidget = _buildHtmlSizeInMBText(text);
+      });
+    });
 
     super.initState();
   }
