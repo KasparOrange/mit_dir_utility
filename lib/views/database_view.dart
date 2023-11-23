@@ -17,6 +17,8 @@ import 'package:mit_dir_utility/modules/user_list_tile_module.dart';
 import 'package:mit_dir_utility/services/database_service.dart';
 import 'package:mit_dir_utility/services/filesystem_service.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
+import 'package:mit_dir_utility/states/database_view_state.dart';
+import 'package:mit_dir_utility/states/sidebar_state.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:table_sticky_headers/table_sticky_headers.dart';
@@ -29,12 +31,17 @@ class DatabaseView extends StatefulWidget implements SidebarActionsInterface {
 
   @override
   // TODO: implement sidebarActions
-  List<Widget> get sidebarActions => [];
+  List<Widget> get sidebarActions => [
+        const Text("Databaseview Sidebar"),
+        const TextField(),
+      ];
 }
 
 class _DatabaseViewState extends State<DatabaseView> {
   List<UserModel> users = []; // Local state to store users
   List<UserModel> filteredUsers = [];
+
+  String searchQuery = '';
 
   List<Widget> get sidebarActions {
     return [
@@ -74,8 +81,6 @@ class _DatabaseViewState extends State<DatabaseView> {
     ];
   }
 
-  String searchQuery = '';
-
   void searchUsers(String query) {
     if (query.isEmpty) {
       // If the search field is empty, display all users
@@ -91,7 +96,8 @@ class _DatabaseViewState extends State<DatabaseView> {
             user.note.toLowerCase().contains(lowercaseQuery) ||
             user.nickName.toLowerCase().contains(lowercaseQuery);
       }).toList();
-      setState(() => filteredUsers = newFilteredUsers);
+      Provider.of<DatabaseViewState>(context);
+      // setState(() => filteredUsers = newFilteredUsers);
     }
   }
 
@@ -99,6 +105,7 @@ class _DatabaseViewState extends State<DatabaseView> {
   Widget build(BuildContext context) {
     // Provider.of<SidebarActionsNotifier>(context, listen: false)
     //     .setSidebarActions(sidebarActions);
+    Provider.of<SidebarState>(context, listen: false).widgets = sidebarActions;
 
     return Row(children: [
       Container(

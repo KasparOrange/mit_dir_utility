@@ -137,7 +137,7 @@ class _SuperViewState extends State<SuperView> {
         ),
         endDrawer: const Placeholder(),
         body: Builder(builder: (context) {
-          var sidebarActions = widget.sidebarActions;
+          // var sidebarActions = widget.sidebarActions;
 
           return KeyboardListener(
             focusNode: FocusNode(),
@@ -146,22 +146,18 @@ class _SuperViewState extends State<SuperView> {
               // themeService: themeService
             ),
             child: Row(children: [
-              Container(
-                  width: 250,
-                  color: Colors.green,
-                  child: Column(
-                    children: Provider.of<GlobalStateService>(context).sidebarActions,
-                  )),
+              if (Provider.of<GlobalStateService>(context).sidebarActions != [])
+                ...Provider.of<GlobalStateService>(context).sidebarActions,
               Expanded(
                 child: Stack(children: [
                   const BackgroundLogoModule(),
                   Builder(builder: (context) {
-                    if (widget.child is SidebarActionsInterface) {
-                      print('It is a SidebarActionsInterface');
-                      sidebarActions = (widget.child as SidebarActionsInterface).sidebarActions;
-                      Provider.of<GlobalStateService>(context, listen: false).sidebarActions =
-                          sidebarActions;
-                    }
+                    // if (widget.child is SidebarActionsInterface) {
+                    //   print('It is a SidebarActionsInterface');
+                    //   sidebarActions = (widget.child as SidebarActionsInterface).sidebarActions;
+                    //   Provider.of<GlobalStateService>(context, listen: false).sidebarActions =
+                    //       sidebarActions;
+                    // }
                     return widget.child;
                   }),
                 ]),
