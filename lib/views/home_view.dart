@@ -13,6 +13,5 @@ class HomeView extends StatelessWidget implements SidebarActionsInterface{
   // TODO: implement sidebarActions
   List<Widget> get sidebarActions => [
     const Text("HomeView Sidebar"),
-    const TextField(),
     ];
 }

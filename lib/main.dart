@@ -10,6 +10,7 @@ import 'package:mit_dir_utility/services/global_state_service.dart';
 import 'package:mit_dir_utility/services/keyboard_service.dart';
 import 'package:mit_dir_utility/services/routing_service.dart';
 import 'package:mit_dir_utility/services/runtime_logging_service.dart';
+import 'package:mit_dir_utility/states/database_view_state.dart';
 import 'package:mit_dir_utility/states/sidebar_state.dart';
 import 'package:mit_dir_utility/views/authentication_view.dart';
 import 'package:mit_dir_utility/views/signing_view.dart';
@@ -62,6 +63,8 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => RuntimeLoggingService()),
         // ChangeNotifierProvider(create: (context) => SidebarActionsNotifier()),
         ChangeNotifierProvider(create: (context) => SidebarState()),
+        ChangeNotifierProvider(create: (context) => DatabaseViewState()),
+
       ],
       child: Builder(builder: (context) {
         print('Building MaterialApp');

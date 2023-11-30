@@ -12,11 +12,13 @@ import 'package:mit_dir_utility/services/keyboard_service.dart';
 // import 'package:mit_dir_utility/services/keyboard_service.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
 import 'package:mit_dir_utility/services/routing_service.dart';
+import 'package:mit_dir_utility/modules/sidebar_module.dart';
 // import 'package:mit_dir_utility/services/theme_service.dart';
 // import 'package:mit_dir_utility/trash/app_bar_user_area.dart';
 // import 'package:mit_dir_utility/views/content_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mit_dir_utility/services/runtime_logging_service.dart';
+import 'package:mit_dir_utility/states/sidebar_state.dart';
 import 'package:provider/provider.dart';
 
 class SuperView extends StatefulWidget {
@@ -131,14 +133,9 @@ class _SuperViewState extends State<SuperView> {
             // const AppBarUserArea()
           ],
         ),
-        drawer: Container(
-          color: Colors.amber,
-          width: 300,
-        ),
-        endDrawer: const Placeholder(),
         body: Builder(builder: (context) {
           // var sidebarActions = widget.sidebarActions;
-
+          var sidebarWidgets = Provider.of<SidebarState>(context, listen: false).widgets;
           return KeyboardListener(
             focusNode: FocusNode(),
             onKeyEvent: (event) => keyboardService.keyHandler(
@@ -146,8 +143,7 @@ class _SuperViewState extends State<SuperView> {
               // themeService: themeService
             ),
             child: Row(children: [
-              if (Provider.of<GlobalStateService>(context).sidebarActions != [])
-                ...Provider.of<GlobalStateService>(context).sidebarActions,
+              if (sidebarWidgets != null) SidebarModule(widgets: sidebarWidgets),
               Expanded(
                 child: Stack(children: [
                   const BackgroundLogoModule(),

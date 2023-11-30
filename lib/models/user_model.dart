@@ -55,7 +55,7 @@ class UserModel {
   UserModel.fromMap({required Map<String, dynamic> map})
       : this(
           timeOfCreation: (map['timeOfCreation'] as Timestamp).toDate(),
-          dateOfBirth: (map['dateOfBirth'] as Timestamp).toDate(),
+          dateOfBirth: (map['timeOfBirth'] as Timestamp).toDate(),
           // timeOfCreation: DateTime.parse(map['timeOfCreation']).toUtc(),
           // dateOfBirth: DateTime.parse(map['dateOfBirth']).toUtc(),
           email: map['email'],
