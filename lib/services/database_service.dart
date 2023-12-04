@@ -12,7 +12,7 @@ class DatabaseService {
 
   static bool mocking = true;
   static String get usersCollection => mocking ? 'mockUsers' : 'people';
-  static String get signaturesBuckets => mocking ? 'mockSignatures' : 'signatures';
+  static String get signaturesBucket => mocking ? 'mockSignatures' : 'signatures';
 
   // NOTE: NEW!
   static Future<String> uploadSignature(String name, Uint8List bytes) async {
@@ -20,7 +20,7 @@ class DatabaseService {
 
     final ref = fsi
         .ref()
-        .child('$signaturesBuckets/${name.replaceAll(' ', '_')}_${randomNumber}_signature.png');
+        .child('$signaturesBucket/${name.replaceAll(' ', '_')}_${randomNumber}_signature.png');
 
     await ref.putData(bytes);
 
@@ -31,7 +31,7 @@ class DatabaseService {
   /// Use to find out if a signature exists in the Firebase Storage.
   ///
   Future<bool> doesUserSignatureExist(UserModel user) async {
-    final ref = fsi.ref().child('$signaturesBuckets/');
+    final ref = fsi.ref().child('$signaturesBucket/');
 
     try {
       await ref.getMetadata();

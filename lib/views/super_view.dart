@@ -34,7 +34,7 @@ class _SuperViewState extends State<SuperView> {
     final keyboardService = Provider.of<KeyboardService>(context);
 
     return Consumer<User?>(
-      builder: (context, value, child) => Scaffold(
+      builder: (context, userValue, child) => Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
             centerTitle: true,
@@ -43,9 +43,12 @@ class _SuperViewState extends State<SuperView> {
             leading: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 // children: routingService.routePaths.map((e) {
-                children: routingService.routeBuilders.keys.map((e) {
+                children: RoutingService.routeBuilders.keys.map((e) {
                   Color? color;
                   Widget? child;
+                  if (userValue == null && e != '/') {
+                    return const SizedBox(width: 0);
+                  }
                   if (e == GoRouter.of(context).location) {
                     color = Colors.amber;
                   }

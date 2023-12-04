@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mit_dir_utility/services/routing_service.dart';
 import 'package:validation_pro/validate.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
 
@@ -62,6 +63,8 @@ class AuthenticationService {
 
   static Future signOut() async {
     try {
+      print('Signing out');
+      RoutingService.navigateTo('/');
       return await FirebaseAuth.instance.signOut();
     } catch (e) {
       log(e);

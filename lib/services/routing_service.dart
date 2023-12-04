@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mit_dir_utility/interfaces.dart';
-import 'package:mit_dir_utility/services/global_state_service.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
 import 'package:mit_dir_utility/states/sidebar_state.dart';
 import 'package:mit_dir_utility/views/authentication_view.dart';
@@ -8,11 +7,7 @@ import 'package:mit_dir_utility/views/database_view.dart';
 import 'package:mit_dir_utility/views/home_view.dart';
 import 'package:mit_dir_utility/views/signing_view.dart';
 import 'package:mit_dir_utility/views/runtime_logging_view.dart';
-// import 'package:flutterapp/views/contact_view.dart';
-// import 'package:flutterapp/views/content_view.dart';
 import 'package:mit_dir_utility/views/super_view.dart';
-// import 'package:flutterapp/modules/markdown_editor_module.dart';
-// import 'package:flutterapp/modules/posts_showcase_module.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mit_dir_utility/views/timetable_view.dart';
 import 'package:provider/provider.dart';
@@ -22,74 +17,74 @@ class RoutingService {
 
   ScrollController scrollController = ScrollController();
 
-  Map<String, Widget Function(BuildContext)> routeBuilders = {
-    '/': (context) {
-      const widget = HomeView();
+  static Map<String, Widget Function(BuildContext)> get routeBuilders => {
+        '/': (context) {
+          const widget = HomeView();
 
-      assert(widget is SidebarInterface);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-        log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
-      });
+          assert(widget is SidebarInterface);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
+            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+          });
 
-      return widget;
-    },
-    '/logs': (context) {
-      const widget = RuntimeLoggingView();
+          return widget;
+        },
+        '/logs': (context) {
+          const widget = RuntimeLoggingView();
 
-      assert(widget is SidebarInterface);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-        log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
-      });
+          assert(widget is SidebarInterface);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
+            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+          });
 
-      return widget;
-    },
-    '/database': (context) {
-      const widget = DatabaseView();
+          return widget;
+        },
+        '/database': (context) {
+          const widget = DatabaseView();
 
-      assert(widget is SidebarInterface);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-        log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
-      });
+          assert(widget is SidebarInterface);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
+            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+          });
 
-      return widget;
-    },
-    '/timetable': (context) {
-      const widget = TimetableView();
+          return widget;
+        },
+        '/timetable': (context) {
+          const widget = TimetableView();
 
-      assert(widget is SidebarInterface);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-        log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
-      });
+          assert(widget is SidebarInterface);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
+            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+          });
 
-      return widget;
-    },
-    '/signing': (context) {
-      const widget = SigningView();
+          return widget;
+        },
+        '/signing': (context) {
+          const widget = SigningView();
 
-      assert(widget is SidebarInterface);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-        log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
-      });
+          assert(widget is SidebarInterface);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
+            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+          });
 
-      return widget;
-    },
-    '/authorization': (context) {
-      const widget = AuthView();
+          return widget;
+        },
+        '/authorization': (context) {
+          const widget = AuthView();
 
-      assert(widget is SidebarInterface);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-        log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
-      });
+          assert(widget is SidebarInterface);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
+            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+          });
 
-      return widget;
-    },
-  };
+          return widget;
+        },
+      };
 
   static String titleFormRoutePath(String path) {
     if (path == '/') return 'Home';
@@ -98,6 +93,71 @@ class RoutingService {
     final withoutFirstLetter = withoutSlash.substring(1);
     return '$firstLetterUpper$withoutFirstLetter';
   }
+
+  static void navigateLeft() {
+    final currentContext = shellNavigatorKey.currentContext!;
+    final currentRouteIndex =
+        routeBuilders.keys.toList().indexOf(GoRouter.of(currentContext).location);
+    final leftRouteIndex = currentRouteIndex - 1;
+
+    final leftRoute = routeBuilders.keys.toList()[leftRouteIndex];
+
+    if (leftRouteIndex > -1) {
+      navigateTo(leftRoute);
+    }
+  }
+
+  static void navigateRight() {
+    final currentContext = shellNavigatorKey.currentContext!;
+    final currentRouteIndex =
+        routeBuilders.keys.toList().indexOf(GoRouter.of(currentContext).location);
+    final rightRouteIndex = currentRouteIndex + 1;
+
+    final rightRoute = routeBuilders.keys.toList()[rightRouteIndex];
+
+    if (rightRouteIndex < routeBuilders.length) {
+      navigateTo(rightRoute);
+    }
+  }
+
+  static void navigateTo(String path) {
+    if (!routeBuilders.keys.contains(path)) {
+      log('Path $path does not exist',
+          onlyDebug: false, error: FlutterError("Path $path does not exist"));
+      return;
+    }
+
+    log('Going to ${titleFormRoutePath(path)}', onlyDebug: true);
+
+    if (path == '/') {
+      shellNavigatorKey.currentState!.popUntil((route) => route.isFirst);
+      return;
+    }
+
+    GoRouter.of(shellNavigatorKey.currentContext!).go(path);
+  }
+
+  //   // final currentRouteIndex = _routeService.routePaths.indexOf(GoRouter.of(context).location);
+  //   final currentRouteIndex =
+  //       RoutingService.routeBuilders.keys.toList().indexOf(GoRouter.of(context).location);
+
+  //   if (event.physicalKey == PhysicalKeyboardKey.keyJ) {
+  //     // RoutingService.goLeft();
+  //     final leftRouteIndex = currentRouteIndex - 1;
+
+  //     if (leftRouteIndex > -1) {
+  //       // context.go(_routeService.routePaths[leftRouteIndex]);
+  //       context.go(RoutingService.routeBuilders.keys.toList()[leftRouteIndex]);
+  //       return true;
+  //     }
+  //   } else if (event.physicalKey == PhysicalKeyboardKey.keyK) {
+  //     final rightRouteIndex = currentRouteIndex + 1;
+
+  //     if (rightRouteIndex < RoutingService.routeBuilders.length) {
+  //       // context.go(_routeService.routePaths[rightRouteIndex]);
+  //       context.go(RoutingService.routeBuilders.keys.toList()[rightRouteIndex]);
+  //       return true;
+  //     }
 
   // NOTE: This is form the change notifier sidebar method
   // void _getSidebarActionsHelper(BuildContext context, Widget child) {
@@ -168,7 +228,7 @@ class RoutingService {
 
   final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
-  final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
 
   Widget? _previousPage;
 
@@ -187,7 +247,7 @@ class RoutingService {
 
   late final router = GoRouter(navigatorKey: _rootNavigatorKey, initialLocation: '/', routes: [
     ShellRoute(
-        navigatorKey: _shellNavigatorKey,
+        navigatorKey: shellNavigatorKey,
         builder: (context, state, child) {
           var sidebarActions = <Widget>[];
           // if (child is SidebarInterface) {
