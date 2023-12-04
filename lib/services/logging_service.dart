@@ -11,10 +11,10 @@ import 'package:mit_dir_utility/globals.dart';
 ///
 /// If [onlyDebug] is true (de)
 void log(Object object,
-    {bool onlyDebug = true, bool long = false, String name = '', Error? error}) {
+    {bool onlyDebug = false, bool long = false, String name = '', Error? error}) {
   var stackTrace = _getStackTrace();
 
-  const int maxChunkSize = 100; // Define a suitable chunk size
+  const int maxChunkSize = 110; // Define a suitable chunk size
 
   if (!long) {
     if (!onlyDebug) {

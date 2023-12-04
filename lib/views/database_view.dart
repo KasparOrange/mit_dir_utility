@@ -1,29 +1,13 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:csv/csv.dart';
-import 'package:date_time_format/date_time_format.dart';
-import 'package:file_picker/_internal/file_picker_web.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mit_dir_utility/interfaces.dart';
 import 'package:mit_dir_utility/models/user_model.dart';
-import 'package:mit_dir_utility/modules/loading_module.dart';
-import 'package:mit_dir_utility/modules/signature_list_entry_module.dart';
 import 'package:mit_dir_utility/modules/user_editor_module.dart';
 import 'package:mit_dir_utility/modules/user_list_tile_module.dart';
 import 'package:mit_dir_utility/services/database_service.dart';
 import 'package:mit_dir_utility/services/filesystem_service.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
 import 'package:mit_dir_utility/states/database_view_state.dart';
-import 'package:mit_dir_utility/states/sidebar_state.dart';
 import 'package:provider/provider.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:table_sticky_headers/table_sticky_headers.dart';
-
-// gsutil -m cp -r gs://mirdirutility.appspot.com/images/* "C:\SELF\Projects\MirWare\signatures"
 
 class DatabaseView extends StatefulWidget implements SidebarInterface {
   const DatabaseView({super.key});

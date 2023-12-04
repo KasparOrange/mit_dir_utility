@@ -2,9 +2,11 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:mit_dir_utility/models/user_model.dart';
+import 'package:mit_dir_utility/services/logging_service.dart';
 
 class DatabaseService {
   static FirebaseFirestore get ffi => FirebaseFirestore.instance;
@@ -15,38 +17,54 @@ class DatabaseService {
   static String get signaturesBucket => mocking ? 'mockSignatures' : 'signatures';
 
   // NOTE: NEW!
-  static Future<String> uploadSignature(String name, Uint8List bytes) async {
-    final randomNumber = Random().nextInt(9000) + 1000; // TODO: Change to Firebase Global ID.
-
-    final ref = fsi
-        .ref()
-        .child('$signaturesBucket/${name.replaceAll(' ', '_')}_${randomNumber}_signature.png');
+  static Future<String> uploadSignature(UserModel user, Uint8List bytes) async {
+    final ref = fsi.ref().child('$signaturesBucket/${user.uid}_signature.png');
 
     await ref.putData(bytes);
 
     return await ref.getDownloadURL();
   }
 
-  ///
+  
   /// Use to find out if a signature exists in the Firebase Storage.
-  ///
-  Future<bool> doesUserSignatureExist(UserModel user) async {
-    final ref = fsi.ref().child('$signaturesBucket/');
-
+  static Future<bool> doesSignatureExist(UserModel user) async {
     try {
+      final ref = fsi.ref().child('$signaturesBucket/${user.uid}_signature.png');
+
       await ref.getMetadata();
+
       return true; // File exists
+    } catch (e) {
+      log('ERRROR while checking signature: $e', long: true, onlyDebug: true);
+      return false; // File does not exist
+    }
+  }
+
+  // Donwload signature
+  static Future<Uint8List?> downloadSignature(UserModel user) async {
+    try {
+      final ref = fsi.ref().child('$signaturesBucket/${user.uid}_signature.png');
+
+      return await ref.getData();
     } on FirebaseException catch (e) {
-      if (e.code == 'object-not-found') {
-        return false; // File does not exist
-      } else {
-        rethrow; // Some other error occurred
-      }
+      log('ERRROR while downloading signature: $e', long: true);
+      return null;
+    }
+  }
+
+  // Delete signature
+  static Future<void> deleteSignature(UserModel user) async {
+    try {
+      final ref = fsi.ref().child('$signaturesBucket/${user.uid}_signature.png');
+
+      await ref.delete();
+    } on FirebaseException catch (e) {
+      log('ERRROR while deleting signature: $e', long: true);
     }
   }
 
   // NOTE: OLD!
-  /// Retrurn the donwload URL of the Signature.
+  /// Return the donwload URL of the Signature.
   static Future<String> uploadSignatureToFBStorage(String name, Uint8List bytes) async {
     final randomNumber = Random().nextInt(9000) + 1000; // TODO: Change to Firebase Global ID.
 

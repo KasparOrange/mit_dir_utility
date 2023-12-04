@@ -11,7 +11,6 @@ import 'package:mit_dir_utility/services/authentication_service.dart';
 import 'package:mit_dir_utility/services/global_state_service.dart';
 import 'package:mit_dir_utility/services/keyboard_service.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
-import 'package:mit_dir_utility/services/network_status_service.dart';
 import 'package:mit_dir_utility/services/routing_service.dart';
 import 'package:mit_dir_utility/services/runtime_logging_service.dart';
 import 'package:mit_dir_utility/states/database_view_state.dart';
@@ -73,7 +72,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => DatabaseViewState()),
       ],
       child: Builder(builder: (context) {
-        log('Building MaterialApp');
+        log('Building MaterialApp', onlyDebug: true);
         // final themeService = Provider.of<ThemeService>(context);
         return MaterialApp.router(
             debugShowCheckedModeBanner: false,

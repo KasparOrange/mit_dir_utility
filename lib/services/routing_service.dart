@@ -24,7 +24,7 @@ class RoutingService {
           assert(widget is SidebarInterface);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}', onlyDebug: true);
           });
 
           return widget;
@@ -35,7 +35,7 @@ class RoutingService {
           assert(widget is SidebarInterface);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}', onlyDebug: true);
           });
 
           return widget;
@@ -46,7 +46,7 @@ class RoutingService {
           assert(widget is SidebarInterface);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}', onlyDebug: true);
           });
 
           return widget;
@@ -57,7 +57,7 @@ class RoutingService {
           assert(widget is SidebarInterface);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}', onlyDebug: true);
           });
 
           return widget;
@@ -68,7 +68,7 @@ class RoutingService {
           assert(widget is SidebarInterface);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}', onlyDebug: true);
           });
 
           return widget;
@@ -79,7 +79,7 @@ class RoutingService {
           assert(widget is SidebarInterface);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}', onlyDebug: true);
           });
 
           return widget;
@@ -122,8 +122,7 @@ class RoutingService {
 
   static void navigateTo(String path) {
     if (!routeBuilders.keys.contains(path)) {
-      log('Path $path does not exist',
-          onlyDebug: false, error: FlutterError("Path $path does not exist"));
+      log('Path $path does not exist', onlyDebug: true);
       return;
     }
 
@@ -254,7 +253,7 @@ class RoutingService {
           //   sidebarActions = (child as SidebarInterface).sidebarWidgets;
           // }
 
-          log('Building ShellRoute');
+          log('Building ShellRoute', onlyDebug: true);
 
           // log(child.runtimeType);
           return SuperView(

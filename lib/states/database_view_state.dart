@@ -44,4 +44,8 @@ class DatabaseViewState extends ChangeNotifier {
     _filteredUsers = value;
     notifyListeners();
   }
+
+  update() {
+    notifyListeners();
+  }
 }

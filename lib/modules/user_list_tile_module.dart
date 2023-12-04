@@ -1,15 +1,21 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:mit_dir_utility/globals.dart';
 import 'package:mit_dir_utility/models/user_model.dart';
-import 'package:mit_dir_utility/modules/signature_button_module.dart';
+import 'package:mit_dir_utility/modules/signature_module.dart';
 import 'package:mit_dir_utility/services/database_service.dart';
+import 'package:mit_dir_utility/services/logging_service.dart';
 
-class UserListTileModule extends StatelessWidget {
+class UserListTileModule extends StatefulWidget {
   const UserListTileModule({super.key, required this.user});
 
   final UserModel user;
+
+  @override
+  State<UserListTileModule> createState() => _UserListTileModuleState();
+}
+
+class _UserListTileModuleState extends State<UserListTileModule> {
+  updateUserListTileModule() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
@@ -20,36 +26,20 @@ class UserListTileModule extends StatelessWidget {
       ),
       child: ListTile(
         leading: const Icon(Icons.person),
-        title: Text('${user.firstName}  ${user.lastName}'),
-        subtitle: Text('${user.email}'),
-        trailing: SignatureButtonModule(isSigned: Random().nextBool(),),
-        // IconButton(
-        //   icon: Image.asset('icons/icons8-signature-50.png'),
-        //   onPressed: () {
-        //     showDialog(
-        //       context: context,
-        //       builder: (context) => AlertDialog(
-        //         title: const Text('Delete User'),
-        //         content: Text('Do you really want to delete ${user.firstName} ${user.lastName}?'),
-        //         actions: [
-        //           TextButton(
-        //             onPressed: () {
-        //               Navigator.of(context).pop();
-        //             },
-        //             child: const Text('Cancel'),
-        //           ),
-        //           TextButton(
-        //             onPressed: () {
-        //               // DatabaseService.deleteUser(user);
-        //               Navigator.of(context).pop();
-        //             },
-        //             child: const Text('Delete'),
-        //           ),
-        //         ],
-        //       ),
-        //     );
-        //   },
-        // ),
+        title: Text('${widget.user.firstName}  ${widget.user.lastName}'),
+        subtitle: Text(widget.user.email),
+        trailing: FutureBuilder(
+            future: DatabaseService.doesSignatureExist(widget.user),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
+              if (snapshot.hasError) {
+                log(snapshot.error!, onlyDebug: false, long: true);
+                return const Icon(Icons.error);
+              }
+              return SignatureModule(user: widget.user);
+            }),
       ),
     );
   }

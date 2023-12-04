@@ -73,7 +73,7 @@ class _SuperViewState extends State<SuperView> {
             ],
           ),
           body: Builder(builder: (context) {
-            log('SuperView first builder triggers');
+            log('SuperView first builder triggers', onlyDebug: true);
             final sidebarWidgets = Provider.of<SidebarState>(context, listen: false).widgets;
             return KeyboardListener(
               focusNode: FocusNode(),
