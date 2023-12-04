@@ -1,24 +1,31 @@
+import 'dart:html' as html;
+import 'dart:js_util' as js_util;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mit_dir_utility/firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'package:mit_dir_utility/interfaces.dart';
-import 'package:mit_dir_utility/models/user_model.dart';
+import 'package:mit_dir_utility/globals.dart';
 import 'package:mit_dir_utility/services/authentication_service.dart';
 import 'package:mit_dir_utility/services/global_state_service.dart';
 import 'package:mit_dir_utility/services/keyboard_service.dart';
+import 'package:mit_dir_utility/services/logging_service.dart';
 import 'package:mit_dir_utility/services/routing_service.dart';
 import 'package:mit_dir_utility/services/runtime_logging_service.dart';
 import 'package:mit_dir_utility/states/database_view_state.dart';
 import 'package:mit_dir_utility/states/sidebar_state.dart';
-import 'package:mit_dir_utility/views/authentication_view.dart';
-import 'package:mit_dir_utility/views/signing_view.dart';
-import 'package:mit_dir_utility/views/drawer_view.dart';
-import 'package:mit_dir_utility/views/runtime_logging_view.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
+  // Prevent the default right-click menu in the entire app
+  js_util.callMethod(html.window, 'addEventListener', [
+    'contextmenu',
+    js_util.allowInterop((html.Event event) {
+      event.preventDefault();
+    })
+  ]);
+
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -44,7 +51,6 @@ class _MyAppState extends State<MyApp> {
   // final _databaseService = DatabaseService();
   final _authService = AuthenticationService();
 
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -64,21 +70,24 @@ class _MyAppState extends State<MyApp> {
         // ChangeNotifierProvider(create: (context) => SidebarActionsNotifier()),
         ChangeNotifierProvider(create: (context) => SidebarState()),
         ChangeNotifierProvider(create: (context) => DatabaseViewState()),
-
       ],
       child: Builder(builder: (context) {
-        print('Building MaterialApp');
+        log('Building MaterialApp');
         // final themeService = Provider.of<ThemeService>(context);
         return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             routerConfig: _routingService.router,
             title: 'MitWare',
             theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 185, 124, 3)),
-              // theme: themeService.lightTheme,
-              // darkTheme: themeService.darkTheme,
-              // themeMode: themeService.themeMode,
-            ));
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: primaryColor,
+                  brightness: Brightness.light,
+                ),
+                useMaterial3: false
+                // theme: themeService.lightTheme,
+                // darkTheme: themeService.darkTheme,
+                // themeMode: themeService.themeMode,
+                ));
       }),
     );
   }

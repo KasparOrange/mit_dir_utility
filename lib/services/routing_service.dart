@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mit_dir_utility/interfaces.dart';
 import 'package:mit_dir_utility/services/global_state_service.dart';
+import 'package:mit_dir_utility/services/logging_service.dart';
+import 'package:mit_dir_utility/states/sidebar_state.dart';
 import 'package:mit_dir_utility/views/authentication_view.dart';
 import 'package:mit_dir_utility/views/database_view.dart';
 import 'package:mit_dir_utility/views/home_view.dart';
@@ -20,71 +22,73 @@ class RoutingService {
 
   ScrollController scrollController = ScrollController();
 
-  ///
-  /// How to add a new route:
-  /// 1. Add the route path to the routePaths list.
-  /// 2. Add the route path to the switch statement in the _getChild method.
-  ///
-
-  // List<String> routePaths = [
-  //   '/',
-  //   '/logs',
-  //   '/database',
-  //   '/markdowntest',
-  //   '/authorization',
-  // ];
-
-  // Widget _getChild(String path, BuildContext context) {
-  //   switch (path) {
-  //     case '/':
-  //       const child = HomeView();
-  //       // _getSidebarActionsHelper(context, child);
-  //       return child;
-
-  //     case '/logs':
-  //       const child = RuntimeLoggingView();
-  //       // _getSidebarActionsHelper(context, child);
-  //       return child;
-
-  //     case '/database':
-  //       var child = DatabaseView();
-  //       // _getSidebarActionsHelper(context, child);
-  //       return child;
-
-  //     case '/markdowntest':
-  //       const child = HomeView();
-  //       // _getSidebarActionsHelper(context, child);
-  //       return child;
-
-  //     case '/authorization':
-  //       const child = AuthView();
-  //       // _getSidebarActionsHelper(context, child);
-  //       return child;
-
-  //     default:
-  //       return const Center(
-  //           child: Text('ERROR',
-  //               style: TextStyle(
-  //                 color: Colors.red,
-  //               )));
-  //   }
-  // }
-
   Map<String, Widget Function(BuildContext)> routeBuilders = {
     '/': (context) {
-      var widget = const HomeView();
-      if (widget is SidebarActionsInterface) {
-        Provider.of<GlobalStateService>(context, listen: false)
-            .sidebarActions = widget.sidebarActions;  
-      }
+      const widget = HomeView();
+
+      assert(widget is SidebarInterface);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
+        log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+      });
+
       return widget;
     },
-    
-    '/logs': (context) => const RuntimeLoggingView(),
-    '/database': (context) => const DatabaseView(),
-    '/timetable': (context) => const TimetableView(),
-    '/signing': (context) => const SigningView(),
-    '/authorization': (context) => const AuthView(),
+    '/logs': (context) {
+      const widget = RuntimeLoggingView();
+
+      assert(widget is SidebarInterface);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
+        log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+      });
+
+      return widget;
+    },
+    '/database': (context) {
+      const widget = DatabaseView();
+
+      assert(widget is SidebarInterface);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
+        log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+      });
+
+      return widget;
+    },
+    '/timetable': (context) {
+      const widget = TimetableView();
+
+      assert(widget is SidebarInterface);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
+        log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+      });
+
+      return widget;
+    },
+    '/signing': (context) {
+      const widget = SigningView();
+
+      assert(widget is SidebarInterface);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
+        log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+      });
+
+      return widget;
+    },
+    '/authorization': (context) {
+      const widget = AuthView();
+
+      assert(widget is SidebarInterface);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
+        log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}');
+      });
+
+      return widget;
+    },
   };
 
   static String titleFormRoutePath(String path) {
@@ -102,26 +106,63 @@ class RoutingService {
   //       .setSidebarActions(sidebarActionsProvider.sidebarActions);
   // }
 
+  // NOTE: Old transition builder
+  // Widget _transitionBuilder(context, animation, secondaryAnimation, child) {
+  //   final routerState = GoRouterState.of(context);
+  //   // var nextRouteIndex = routePaths.indexOf(routerState.path!);
+  //   var nextRouteIndex = routeBuilders.keys.toList().indexOf(routerState.path!);
+  //   double beginOffsetX = currentRouteIndex < nextRouteIndex ? 1.0 : -1.0;
+
+  //   currentRouteIndex = nextRouteIndex;
+
+  //   // TODO: Find a way to scroll back to top when trasitioning.
+  //   // scrollController.animateTo(0,
+  //   //     curve: Curves.bounceInOut, duration: Duration(milliseconds: 100));
+
+  //   // scrollController.jumpTo(1);
+
+  //   return SlideTransition(
+  //     position: animation.drive(Tween<Offset>(
+  //       begin: Offset(beginOffsetX, 0),
+  //       end: Offset.zero,
+  //     ).chain(CurveTween(curve: Curves.bounceInOut))),
+  //     child: child,
+  //   );
+  // }
+
+  // NOTE: New transition builder
   Widget _transitionBuilder(context, animation, secondaryAnimation, child) {
+    // Determine the direction of the transition
     final routerState = GoRouterState.of(context);
-    // var nextRouteIndex = routePaths.indexOf(routerState.path!);
     var nextRouteIndex = routeBuilders.keys.toList().indexOf(routerState.path!);
     double beginOffsetX = currentRouteIndex < nextRouteIndex ? 1.0 : -1.0;
-
     currentRouteIndex = nextRouteIndex;
 
-    // TODO: Find a way to scroll back to top when trasitioning.
-    // scrollController.animateTo(0,
-    //     curve: Curves.bounceInOut, duration: Duration(milliseconds: 100));
-
-    // scrollController.jumpTo(1);
-
-    return SlideTransition(
+    // Slide-in transition for the incoming page
+    var slideInTransition = SlideTransition(
       position: animation.drive(Tween<Offset>(
         begin: Offset(beginOffsetX, 0),
         end: Offset.zero,
-      ).chain(CurveTween(curve: Curves.bounceInOut))),
+      ).chain(CurveTween(curve: Curves.easeInOut))),
       child: child,
+    );
+
+    // Slide-out transition for the outgoing page
+    var slideOutTransition = _previousPage != null
+        ? SlideTransition(
+            position: secondaryAnimation.drive(Tween<Offset>(
+              begin: Offset.zero,
+              end: Offset(-beginOffsetX, 0),
+            ).chain(CurveTween(curve: Curves.easeInOut))),
+            child: _previousPage!,
+          )
+        : const SizedBox.shrink(); // Fallback to an empty widget if no previous page
+
+    return Stack(
+      children: [
+        slideOutTransition, // This will be the previous page
+        slideInTransition, // This will be the new page
+      ],
     );
   }
 
@@ -129,15 +170,33 @@ class RoutingService {
 
   final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>();
 
+  Widget? _previousPage;
+
+  late final CustomRouteObserver _routeObserver = CustomRouteObserver(this);
+
+  void _updatePreviousPage(BuildContext context, String currentPath) {
+    _previousPage = routeBuilders[currentPath]?.call(context);
+  }
+
+  void _updatePreviousPageOnPush(String? previousRouteName) {
+    if (previousRouteName != null) {
+      print(previousRouteName);
+      _previousPage = routeBuilders[previousRouteName]?.call(_rootNavigatorKey.currentContext!);
+    }
+  }
+
   late final router = GoRouter(navigatorKey: _rootNavigatorKey, initialLocation: '/', routes: [
     ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) {
           var sidebarActions = <Widget>[];
-          if (child is SidebarActionsInterface) {
-            sidebarActions = ((child as Widget) as SidebarActionsInterface).sidebarActions;
-          }
-          // print(child.runtimeType);
+          // if (child is SidebarInterface) {
+          //   sidebarActions = (child as SidebarInterface).sidebarWidgets;
+          // }
+
+          log('Building ShellRoute');
+
+          // log(child.runtimeType);
           return SuperView(
             sidebarActions: sidebarActions,
             child: child,
@@ -157,4 +216,27 @@ class RoutingService {
                 }))
             .toList())
   ]);
+}
+
+class CustomRouteObserver extends RouteObserver<PageRoute<dynamic>> {
+  CustomRouteObserver(this._routingService);
+
+  final RoutingService _routingService;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPush(route, previousRoute);
+    if (previousRoute is PageRoute) {
+      // Update the previous page when a new route is pushed
+      _routingService._updatePreviousPageOnPush(previousRoute.settings.name);
+    }
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPop(route, previousRoute);
+    if (previousRoute is PageRoute) {
+      // Handle pop event if necessary
+    }
+  }
 }

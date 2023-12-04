@@ -61,6 +61,11 @@ dependencies:
   flutter_html: ^3.0.0-beta.2
   rxdart: ^0.27.7
   syncfusion_flutter_calendar: ^23.1.44
+  flutter_svg: ^2.0.9
+  animated_custom_dropdown: ^2.0.0
+  collapsible: ^1.0.0
+  cool_dropdown: ^2.1.0
+  ffloat_nullsafety: ^3.3.6
 
 dev_dependencies:
   flutter_test:

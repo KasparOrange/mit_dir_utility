@@ -12,7 +12,40 @@ class DatabaseService {
 
   static bool mocking = true;
   static String get usersCollection => mocking ? 'mockUsers' : 'people';
+  static String get signaturesBuckets => mocking ? 'mockSignatures' : 'signatures';
 
+  // NOTE: NEW!
+  static Future<String> uploadSignature(String name, Uint8List bytes) async {
+    final randomNumber = Random().nextInt(9000) + 1000; // TODO: Change to Firebase Global ID.
+
+    final ref = fsi
+        .ref()
+        .child('$signaturesBuckets/${name.replaceAll(' ', '_')}_${randomNumber}_signature.png');
+
+    await ref.putData(bytes);
+
+    return await ref.getDownloadURL();
+  }
+
+  ///
+  /// Use to find out if a signature exists in the Firebase Storage.
+  ///
+  Future<bool> doesUserSignatureExist(UserModel user) async {
+    final ref = fsi.ref().child('$signaturesBuckets/');
+
+    try {
+      await ref.getMetadata();
+      return true; // File exists
+    } on FirebaseException catch (e) {
+      if (e.code == 'object-not-found') {
+        return false; // File does not exist
+      } else {
+        rethrow; // Some other error occurred
+      }
+    }
+  }
+
+  // NOTE: OLD!
   /// Retrurn the donwload URL of the Signature.
   static Future<String> uploadSignatureToFBStorage(String name, Uint8List bytes) async {
     final randomNumber = Random().nextInt(9000) + 1000; // TODO: Change to Firebase Global ID.
@@ -66,15 +99,16 @@ class DatabaseService {
     return await ffi.collection('mockUsers').doc().set(user.asMap);
   }
 
-  static Stream<List<UserModel>> get userStream => ffi
-      .collection(usersCollection)
-      .snapshots()
-      .map((snapshot) => snapshot.docs.map((doc) => UserModel.fromMap(map: doc.data())).toList());
+  static Stream<List<UserModel>> get userStream =>
+      ffi.collection(usersCollection).snapshots().map((snapshot) => snapshot.docs.map((doc) {
+            // print(doc.data());
+            return UserModel.fromMap(map: doc.data());
+          }).toList());
 
   static Future<List<UserModel>> get users async {
     final snapshot = await ffi.collection(usersCollection).get();
     return snapshot.docs.map((doc) => UserModel.fromMap(map: doc.data())).toList();
-  }   
+  }
 
   //   Future _uploadImageToFBStorage(String name, Uint8List bytes) async {
   //   final randomNumber = Random().nextInt(9000) + 1000;

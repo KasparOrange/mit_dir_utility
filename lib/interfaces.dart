@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-abstract class SidebarActionsInterface {
-  List<Widget> get sidebarActions;
+abstract class SidebarInterface {
+  List<Widget> get sidebarWidgets;
 }
 
 // class SidebarActionsNotifier extends ChangeNotifier {

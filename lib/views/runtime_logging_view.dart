@@ -12,49 +12,28 @@ import 'package:mit_dir_utility/interfaces.dart';
 import 'package:mit_dir_utility/modules/quill_module.dart';
 import 'package:mit_dir_utility/modules/rive_test_animation.dart';
 import 'package:mit_dir_utility/services/runtime_logging_service.dart';
+import 'package:mit_dir_utility/states/sidebar_state.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog_platform_interface.dart';
 import 'package:qr_code_dart_scan/qr_code_dart_scan.dart';
 import 'package:quill_html_editor/quill_html_editor.dart';
 
-class RuntimeLoggingView extends StatefulWidget implements SidebarActionsInterface {
+class RuntimeLoggingView extends StatelessWidget implements SidebarInterface {
   const RuntimeLoggingView({super.key});
 
   @override
-  State<RuntimeLoggingView> createState() => _RuntimeLoggingViewState();
-
-  @override
-  List<Widget> get sidebarActions {
-    return [const Text("RuntimeLoggingView Sidebar")];
+  List<Widget> get sidebarWidgets {
+    return [];
   }
-}
 
-class _RuntimeLoggingViewState extends State<RuntimeLoggingView> {
   // final List<String> logs = [];
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // Configure logger
-  //   Logger.level = Level.verbose;
-  //   final logger = Logger(
-  //     printer: SimplePrinter(),
-  //     output: ExampleOutput((output) {
-  //       setState(() {
-  //         logs.add(output);
-  //       });
-  //     }),
-  //   );
-
-  //   // Log some data
-  //   // logger.d("Hello, logs!");
-  //   // logger.e("This is an error");
-  //   // logger.i("This is informational");
-  // }
-
   @override
   Widget build(BuildContext context) {
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   Provider.of<SidebarState>(context, listen: false).widgets = sidebarWidgets;
+    // });
+
     return Column(
       children: [
         ConstrainedBox(
@@ -81,6 +60,11 @@ class _RuntimeLoggingViewState extends State<RuntimeLoggingView> {
         ),
       ],
     );
+  }
+
+  @override
+  List<Widget> get sidebarActions {
+    return [const Text("RuntimeLoggingView Sidebar")];
   }
 }
 

@@ -23,20 +23,16 @@ import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:table_sticky_headers/table_sticky_headers.dart';
 
-class DatabaseView extends StatefulWidget  {
+// gsutil -m cp -r gs://mirdirutility.appspot.com/images/* "C:\SELF\Projects\MirWare\signatures"
+
+class DatabaseView extends StatefulWidget implements SidebarInterface {
   const DatabaseView({super.key});
 
   @override
   State<DatabaseView> createState() => _DatabaseViewState();
-}
 
-class _DatabaseViewState extends State<DatabaseView> {
-  // List<UserModel> users = []; // Local state to store users
-  // List<UserModel> filteredUsers = [];
-
-  String searchQuery = '';
-
-  List<Widget> get sidebarActions {
+  @override
+  List<Widget> get sidebarWidgets {
     return [
       Builder(builder: (context) {
         return ElevatedButton(
@@ -61,17 +57,16 @@ class _DatabaseViewState extends State<DatabaseView> {
           padding: const EdgeInsets.all(8.0),
           child: TextField(
             onChanged: (value) {
-              var state = Provider.of<DatabaseViewState>(context);
-              // setState(() {
-              //   searchQuery = value;
-              // });
+              var state = Provider.of<DatabaseViewState>(context, listen: false);
+              state.filteredUsers = [];
               if (value.isEmpty) {
                 // If the search field is empty, display all users
-                // setState(() => filteredUsers = users);
+                state.filteredUsers = state.users;
+                log('Value was empty', long: true, onlyDebug: false);
               } else {
                 // Filter the users list based on the search query
                 var lowercaseQuery = value.toLowerCase();
-                var newFilteredUsers = state.users!
+                var newFilteredUsers = state.users
                     .where((user) =>
                         user.firstName.toLowerCase().contains(lowercaseQuery) ||
                         user.lastName.toLowerCase().contains(lowercaseQuery) ||
@@ -81,7 +76,7 @@ class _DatabaseViewState extends State<DatabaseView> {
                         user.nickName.toLowerCase().contains(lowercaseQuery))
                     .toList();
                 state.filteredUsers = newFilteredUsers;
-                // setState(() => filteredUsers = newFilteredUsers);
+                log(newFilteredUsers.length, long: true, onlyDebug: false);
               }
             },
             decoration: const InputDecoration(
@@ -93,71 +88,102 @@ class _DatabaseViewState extends State<DatabaseView> {
       }),
     ];
   }
+}
 
-  // void searchUsers(String query) {
-  //   if (query.isEmpty) {
-  //     // If the search field is empty, display all users
-  //     setState(() => filteredUsers = users);
-  //   } else {
-  //     // Filter the users list based on the search query
-  //     var lowercaseQuery = query.toLowerCase();
-  //     var newFilteredUsers = users.where((user) {
-  //       return user.firstName.toLowerCase().contains(lowercaseQuery) ||
-  //           user.lastName.toLowerCase().contains(lowercaseQuery) ||
-  //           user.email.toLowerCase().contains(lowercaseQuery) ||
-  //           user.phone.toLowerCase().contains(lowercaseQuery) ||
-  //           user.note.toLowerCase().contains(lowercaseQuery) ||
-  //           user.nickName.toLowerCase().contains(lowercaseQuery);
-  //     }).toList();
-  //     Provider.of<DatabaseViewState>(context);
-  //     // setState(() => filteredUsers = newFilteredUsers);
-  //   }
+class _DatabaseViewState extends State<DatabaseView> {
+  // @override
+  // List<Widget> get sidebarWidgets {
+  //   return [
+  //     Builder(builder: (context) {
+  //       return ElevatedButton(
+  //         onPressed: () {
+  //           showDialog(
+  //               context: context,
+  //               builder: (context) {
+  //                 return Material(child: UserEditorModule(user: UserModel.empty()));
+  //               });
+  //         },
+  //         child: const Text('Add Person'),
+  //       );
+  //     }),
+  //     Builder(builder: (context) {
+  //       return const ElevatedButton(
+  //         onPressed: FilesystemService.pickFile,
+  //         child: Text('Import CSV'),
+  //       );
+  //     }),
+  //     Builder(builder: (context) {
+  //       return Padding(
+  //         padding: const EdgeInsets.all(8.0),
+  //         child: TextField(
+  //           onChanged: (value) {
+  //             var state = Provider.of<DatabaseViewState>(context, listen: false);
+
+  //             if (value.isEmpty) {
+  //               // If the search field is empty, display all users
+  //               // setState(() => filteredUsers = users);
+  //             } else {
+  //               // Filter the users list based on the search query
+  //               var lowercaseQuery = value.toLowerCase();
+  //               var newFilteredUsers = state.users!
+  //                   .where((user) =>
+  //                       user.firstName.toLowerCase().contains(lowercaseQuery) ||
+  //                       user.lastName.toLowerCase().contains(lowercaseQuery) ||
+  //                       user.email.toLowerCase().contains(lowercaseQuery) ||
+  //                       user.phone.toLowerCase().contains(lowercaseQuery) ||
+  //                       user.note.toLowerCase().contains(lowercaseQuery) ||
+  //                       user.nickName.toLowerCase().contains(lowercaseQuery))
+  //                   .toList();
+  //               state.filteredUsers = newFilteredUsers;
+  //               // setState(() => filteredUsers = newFilteredUsers);
+  //             }
+  //           },
+  //           decoration: const InputDecoration(
+  //             labelText: 'Search',
+  //             suffixIcon: Icon(Icons.search),
+  //           ),
+  //         ),
+  //       );
+  //     }),
+  //   ];
   // }
+
+  bool initialized = false;
 
   @override
   Widget build(BuildContext context) {
-    // Provider.of<SidebarActionsNotifier>(context, listen: false)
-    //     .setSidebarActions(sidebarActions);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<SidebarState>(context, listen: false).widgets = sidebarActions;
-    });
-    var state = Provider.of<DatabaseViewState>(context);
+    final state = Provider.of<DatabaseViewState>(context);
 
     return Row(children: [
-      Container(
-        color: Colors.green,
-        width: 250,
-        child: Column(children: [
-          const Text('Sidebar'),
-          ...sidebarActions,
-        ]),
-      ),
       Expanded(
         child: StreamBuilder(
           stream: DatabaseService.userStream,
           builder: (context, snapshot) {
-            // print("Data: ${snapshot.data}");
-            // print("Error: ${snapshot.error}");
-            // print("Connection State: ${snapshot.connectionState}");
+
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (!snapshot.hasData) {
-              return const Center(child: Text('No users found'));
+            if (snapshot.hasError) {
+              return ErrorWidget('An error occured! Are you signed in?\n${snapshot.error}');
             }
 
             state.users = snapshot.data!;
 
-            if (state.filteredUsers!.isEmpty && searchQuery.isEmpty) {
-              state.filteredUsers = state.users;
+            // The first time the stream is loaded, set the filteredUsers to the users to 
+            // display all users. If this is not done, no users will be displayed until the
+            // search field is used.
+            if (!initialized) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                state.filteredUsers = state.users;
+              });
+              initialized = true;
             }
 
             return ListView.builder(
-              itemCount: state.users!.length,
+              itemCount: state.filteredUsers.length,
               itemBuilder: (context, index) {
-                // Build user list item widget
-                return UserListTileModule(user: state.users![index]);
+                return UserListTileModule(user: state.filteredUsers[index]);
               },
             );
           },
