@@ -1,97 +1,176 @@
+import 'dart:math';
+
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+class ThemeService {
+  static final CustomColors colors = CustomColors();
 
-class ThemeService with ChangeNotifier {
-  var themeMode = ThemeMode.light;
-  var lightenColors = true;
+  static final ThemeData mainTheme = ThemeData(
+    colorScheme: mainColorScheme.copyWith(brightness: Brightness.light),
 
-  void toggleThemeMode() {
-    themeMode = themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-    lightenColors = themeMode == ThemeMode.light;
-    notifyListeners();
-  }
+    textTheme: const TextTheme(
+      // labelLarge: TextStyle(fontSize: 20.0, fontFamily: 'Willow'), // That is used for material buttons
+      labelMedium: TextStyle(fontSize: 16.0, fontFamily: 'Willow'),
+      labelSmall: TextStyle(fontSize: 12.0, fontFamily: 'Willow'),
+      displayLarge: TextStyle(fontSize: 34.0, fontFamily: 'Willow'),
+      displayMedium: TextStyle(fontSize: 20.0, fontFamily: 'Willow'),
+      displaySmall: TextStyle(fontSize: 16.0, fontFamily: 'Willow'),
+      // bodyLarge: TextStyle(fontSize: 20.0, fontFamily: 'Willow'),
+      bodyMedium: TextStyle(fontSize: 16, fontFamily: 'Arial'),
+    ),
 
-  final primaryColor = const Color(0xFF3D6B4F);
-  final secondaryColor = const Color(0xFF6a1e03);
+    iconTheme: const IconThemeData(
+      color: Colors.black,
+      size: 24,
+    ),
 
-  // final scheme1 = CustomColorScheme(
-  //     primaryColor: const Color(0xFF3D6B4F),
-  //     secondaryColor: const Color(0xFF6a1e03),
-  //     tertiaryColor: Colors.black);
+    inputDecorationTheme: InputDecorationTheme(
+      suffixIconColor: Colors.black,
 
-  // final scheme2 = CustomColorScheme(
-  //     primaryColor: const Color(0xFF3d6b4f),
-  //     secondaryColor: const Color(0xFF6b4d3d),
-  //     tertiaryColor: const Color(0xFF6b3d4b));
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(5),
+        borderSide: BorderSide(
+          color: colors.tertiary,
+          width: 2,
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(5),
+        borderSide: BorderSide(
+          color: colors.tertiary,
+          width: 2,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(5),
+        borderSide: BorderSide(
+          color: colors.secondary,
+          width: 3,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(5),
+        borderSide: BorderSide(
+          color: colors.error,
+          width: 2,
+        ),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(5),
+        borderSide: BorderSide(
+          color: colors.error,
+          width: 2,
+        ),
+      ),
+      labelStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 16,
+        fontFamily: 'Arial',
+      ),
+      hintStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 16,
+        fontFamily: 'Arial',
+      ),
+      helperStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 16,
+        fontFamily: 'Arial',
+      ),
+      errorStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 16,
+        fontFamily: 'Arial',
+      ),
+      // iconColor: colors.secondary,
+    ),
 
-  // bool get lightenColors => themeMode == ThemeMode.light;
+    // elevatedButtonTheme: ElevatedButtonThemeData(
+    //   style: ElevatedButton.styleFrom(
+    //     backgroundColor: colors.niceOrage,
+    //     // foregroundColor: Colors.black,
+    //   ),
+    // ),
 
-  late final textButtonThemeData = TextButtonThemeData(
-      style: ButtonStyle(
-          minimumSize: const MaterialStatePropertyAll(Size.fromWidth(100)),
-          overlayColor: MaterialStatePropertyAll(primaryColor.getShadeColor(
-              shadeValue: 10, lighten: lightenColors)),
-          iconColor: MaterialStatePropertyAll(primaryColor.getShadeColor(
-              shadeValue: 50, lighten: lightenColors))));
-
-  late final scheme1 = ColorScheme.fromSeed(
-    seedColor: Colors.black,
-    primary: const Color(0xFF3D6B4F),
-    secondary: const Color(0xFF6a1e03),
-    tertiary: Colors.black,
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        side: const BorderSide(),
+        backgroundColor: colors.secondary,
+        padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+        textStyle: const TextStyle(
+          fontSize: 26.0,
+          fontFamily: 'Willow',
+        ),
+        foregroundColor: Colors.black,
+      ),
+    ),
+    brightness: Brightness.light,
+    useMaterial3: false,
   );
 
-  late final scheme2 = ColorScheme.fromSeed(
-      seedColor: const Color(0xFF3D6B4F),
-      primary: const Color(0xFF3D6B4F),
-      secondary: const Color(0xFF6a1e03),
-      tertiary: const Color(0xFF6b3d4b));
+  static final ColorScheme mainColorScheme = ColorScheme.fromSeed(seedColor: colors.background);
 
-  late final scheme4 = ColorScheme(
-    primary: primaryColor, 
-    onPrimary: Colors.black, 
-    secondary: secondaryColor, 
-    onSecondary: primaryColor.getShadeColor(shadeValue: 10, lighten: true), 
-    background: primaryColor.getShadeColor(shadeValue: 60, lighten: true), 
-    onBackground: Colors.black, 
-    surface: primaryColor.getShadeColor(shadeValue: 10, lighten: true),
-    onSurface: primaryColor.getShadeColor(shadeValue: 20, lighten: true), 
-    error: Colors.red, 
-    onError: Colors.red.getShadeColor(shadeValue: 20, lighten: false), 
-    brightness: Brightness.light, 
-  );
-    
+  // var themeMode = ThemeMode.light;
+  // var lightenColors = true;
 
-  // late final scheme3 =
-  //     ColorScheme.fromSeed(seedColor: primaryColor, secondary: secondaryColor);
-
-  late final lightTheme = ThemeData(
-    dividerColor: Colors.black,
-    colorScheme: scheme4,
-    textButtonTheme: textButtonThemeData,
-  );
-
-  late final darkTheme =
-      ThemeData.dark().copyWith(textButtonTheme: textButtonThemeData);
-
-  // flex_color_scheme
-  // late final lightTheme = FlexThemeData.light(scheme: FlexScheme.dellGenoa);
-  // late final darkTheme = FlexThemeData.dark(scheme: FlexScheme.dellGenoa);
+  // void toggleThemeMode() {
+  //   themeMode = themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+  //   lightenColors = themeMode == ThemeMode.light;
+  //   notifyListeners();
+  // }
 }
+// transform this class into a map where the key is the name of the color and the value is the color
 
-// class CustomColorScheme {
-//   CustomColorScheme(
-//       {required this.primaryColor,
-//       required this.secondaryColor,
-//       required this.tertiaryColor});
-//   Color primaryColor;
-//   Color secondaryColor;
-//   Color tertiaryColor;
-//   ColorScheme toColorSchmeFromSeed() {
-//     return ColorScheme.fromSeed(
-//         seedColor: primaryColor,
-//         secondary: secondaryColor,
-//         tertiary: tertiaryColor);
-//   }
-// }
+class CustomColors {
+  final Color highlight = const Color.fromARGB(255, 226, 152, 67);
+  final Color error = const Color.fromARGB(255, 223, 56, 23);
+  final Color errorLight = const Color.fromARGB(255, 185, 33, 3);
+  final Color errorDark = const Color.fromARGB(255, 148, 26, 2);
+  final Color ok = const Color.fromARGB(255, 124, 197, 35);
+  final Color okLight = const Color.fromARGB(255, 155, 185, 3);
+  final Color okDark = const Color.fromARGB(255, 124, 148, 2);
+
+  final Color niceOrage = const Color.fromARGB(255, 254, 134, 0);
+
+  final Color secondary = const Color.fromARGB(255, 69, 91, 120);
+  final Color tertiary = const Color.fromARGB(255, 45, 48, 55);
+
+  final Color background = const Color(0xff92683E);
+  final Color oldBackground = const Color.fromARGB(255, 129, 85, 0);
+  final Color newBackground = const Color(0xff8b5000);
+
+  final Color oldPrimaryColor = const Color.fromARGB(255, 185, 124, 3);
+  final Color oldSecondaryColor = const Color.fromARGB(255, 129, 85, 0);
+  final Color oldTertiaryColor = const Color.fromARGB(255, 255, 250, 187);
+
+  final Color paynesGray = const Color.fromARGB(255, 87, 110, 135);
+  final Color linen = const Color.fromARGB(255, 253, 245, 234);
+  final Color delftBlue = const Color.fromARGB(255, 50, 58, 79);
+  final Color davysGray = const Color.fromARGB(255, 72, 73, 86);
+  final Color butterscotch = const Color.fromARGB(255, 229, 150, 57);
+
+  Map<String, Color> get map => {
+        'highlight': highlight,
+        'error': error,
+        'errorLight': errorLight,
+        'errorDark': errorDark,
+        'ok': ok,
+        'okLight': okLight,
+        'okDark': okDark,
+        'niceOrage': niceOrage,
+        'secondary': secondary,
+        'tertiary': tertiary,
+        'background': background,
+        'oldPrimaryColor': oldPrimaryColor,
+        'oldSecondaryColor': oldSecondaryColor,
+        'oldTertiaryColor': oldTertiaryColor,
+        'Payne\'s gray': paynesGray,
+        'Linen': linen,
+        'Delft Blue': delftBlue,
+        'Davy\'s gray': davysGray,
+        'Butterscotch': butterscotch,
+      };
+}

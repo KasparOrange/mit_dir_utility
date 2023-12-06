@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mit_dir_utility/globals.dart';
 import 'package:mit_dir_utility/models/user_model.dart';
 import 'package:mit_dir_utility/modules/signature_module.dart';
 import 'package:mit_dir_utility/services/database_service.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
+import 'package:mit_dir_utility/services/theme_service.dart';
 
 class UserListTileModule extends StatefulWidget {
   const UserListTileModule({super.key, required this.user});
@@ -20,9 +20,10 @@ class _UserListTileModuleState extends State<UserListTileModule> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: primaryColor,
+      color: ThemeService.colors.oldPrimaryColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
+        side: const BorderSide(),
+        borderRadius: BorderRadius.circular(5),
       ),
       child: ListTile(
         leading: const Icon(Icons.person),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mit_dir_utility/globals.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
+import 'package:mit_dir_utility/services/theme_service.dart';
 import 'package:mit_dir_utility/states/sidebar_state.dart';
 import 'package:provider/provider.dart';
 
@@ -49,18 +49,16 @@ class _SidebarModuleState extends State<SidebarModule> with SingleTickerProvider
 
     // Iterate over the original list and add a Spacer after each widget
     for (var i = 0; i < widgets.length; i++) {
-
       if (i < widgets.length - 1) {
         // Add a Spacer after the widget, except for the last widget
         interspersed.add(SizedBox(height: space));
-      } 
+      }
 
       interspersed.add(widgets[i]); // Add the original widget
     }
 
     return interspersed;
   }
-
 
   @override
   void dispose() {
@@ -73,19 +71,33 @@ class _SidebarModuleState extends State<SidebarModule> with SingleTickerProvider
     final widgets = Provider.of<SidebarState>(context, listen: true).widgets;
     _restartAnimation(); // Restart animation on each build
 
-    log('SidebarModule build');
+    log('SidebarModule build', onlyDebug: true);
 
     return Container(
       width: 250,
-      color: tertiaryColor,
+      decoration: BoxDecoration(
+        color: ThemeService.colors.newBackground,
+        gradient: LinearGradient(
+            colors: [Theme.of(context).colorScheme.primary, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black,
+            spreadRadius: 2,
+            blurRadius: 7,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
       child: AnimatedBuilder(
         animation: _offsetAnimation,
         builder: (context, child) {
           return SlideTransition(
             position: _offsetAnimation,
-            child: Column( 
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
-              children: intersperseSpacer(widgets, 30),
+              children: intersperseSpacer(widgets, 10),
             ),
           );
         },

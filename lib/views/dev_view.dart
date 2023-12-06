@@ -1,30 +1,18 @@
-import 'dart:io';
-
-import 'package:camera/camera.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:csv/csv.dart';
-import 'package:file_picker/_internal/file_picker_web.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:mit_dir_utility/interfaces.dart';
-import 'package:mit_dir_utility/modules/quill_module.dart';
-import 'package:mit_dir_utility/modules/rive_test_animation.dart';
+import 'package:mit_dir_utility/modules/color_palette_module.dart';
 import 'package:mit_dir_utility/services/runtime_logging_service.dart';
-import 'package:mit_dir_utility/states/sidebar_state.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
-import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog_platform_interface.dart';
-import 'package:qr_code_dart_scan/qr_code_dart_scan.dart';
-import 'package:quill_html_editor/quill_html_editor.dart';
 
-class RuntimeLoggingView extends StatelessWidget implements SidebarInterface {
-  const RuntimeLoggingView({super.key});
+class DevView extends StatelessWidget implements SidebarInterface {
+  const DevView({super.key});
 
   @override
   List<Widget> get sidebarWidgets {
-    return [];
+    return [
+      const SizedBox(width: 0),
+    ];
   }
 
   // final List<String> logs = [];
@@ -36,6 +24,8 @@ class RuntimeLoggingView extends StatelessWidget implements SidebarInterface {
 
     return Column(
       children: [
+        SizedBox(height: 50,
+        child: ColorPaletteModule()),
         ConstrainedBox(
           constraints: BoxConstraints.expand(height: MediaQuery.of(context).size.height * 0.5),
           child: Consumer<RuntimeLoggingService>(

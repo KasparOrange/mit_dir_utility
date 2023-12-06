@@ -8,11 +8,11 @@ import 'package:mit_dir_utility/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:mit_dir_utility/globals.dart';
 import 'package:mit_dir_utility/services/authentication_service.dart';
-import 'package:mit_dir_utility/services/global_state_service.dart';
 import 'package:mit_dir_utility/services/keyboard_service.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
 import 'package:mit_dir_utility/services/routing_service.dart';
 import 'package:mit_dir_utility/services/runtime_logging_service.dart';
+import 'package:mit_dir_utility/services/theme_service.dart';
 import 'package:mit_dir_utility/states/database_view_state.dart';
 import 'package:mit_dir_utility/states/sidebar_state.dart';
 import 'package:provider/provider.dart';
@@ -59,35 +59,21 @@ class _MyAppState extends State<MyApp> {
           value: AuthenticationService().user,
           initialData: null,
         ),
-        // StreamProvider<QuerySnapshot?>.value(value: DatabaseService().posts, initialData: null),
         Provider.value(value: _routingService),
         Provider.value(value: _keyboardService),
-        // Provider.value(value: _databaseService),
         Provider.value(value: _authService),
-        Provider.value(value: GlobalStateService()),
-        // ListenableProvider.value(value: _themeService),
         ChangeNotifierProvider(create: (context) => RuntimeLoggingService()),
-        // ChangeNotifierProvider(create: (context) => SidebarActionsNotifier()),
         ChangeNotifierProvider(create: (context) => SidebarState()),
         ChangeNotifierProvider(create: (context) => DatabaseViewState()),
       ],
       child: Builder(builder: (context) {
         log('Building MaterialApp', onlyDebug: true);
-        // final themeService = Provider.of<ThemeService>(context);
         return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            routerConfig: _routingService.router,
-            title: 'MitWare',
-            theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(
-                  seedColor: primaryColor,
-                  brightness: Brightness.light,
-                ),
-                useMaterial3: false
-                // theme: themeService.lightTheme,
-                // darkTheme: themeService.darkTheme,
-                // themeMode: themeService.themeMode,
-                ));
+          debugShowCheckedModeBanner: false,
+          routerConfig: _routingService.router,
+          title: 'MitWare',
+          theme: ThemeService.mainTheme,
+        );
       }),
     );
   }

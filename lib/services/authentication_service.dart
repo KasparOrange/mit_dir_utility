@@ -2,20 +2,31 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mit_dir_utility/services/routing_service.dart';
+import 'package:provider/provider.dart';
 import 'package:validation_pro/validate.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
 
 class AuthenticationService {
   // NOTE: Initially a sign-in view should be shown.
   AuthViewToShow authViewToShow = AuthViewToShow.ShowSignIn;
+  static String email = 'ko.fcbu@gmail.com';
+  static String password = 'MITDIRORGA!2022';
+
+  static FirebaseAuth fai = FirebaseAuth.instance;
 
   Stream<User?> get user {
     return FirebaseAuth.instance.authStateChanges();
   }
 
+  static fastSignInSignOut(BuildContext context) async {
+    Provider.of<User?>(context, listen: false) == null
+        ? await signInWithEmailAndPassword(email, password)
+        : await signOut();
+  }
+
   Future signInAnonymously() async {
     try {
-      final userCredential = await FirebaseAuth.instance.signInAnonymously();
+      final userCredential = await fai.signInAnonymously();
       return userCredential.user;
     } catch (e) {
       log(e);

@@ -3,10 +3,10 @@ import 'package:mit_dir_utility/interfaces.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
 import 'package:mit_dir_utility/states/sidebar_state.dart';
 import 'package:mit_dir_utility/views/authentication_view.dart';
-import 'package:mit_dir_utility/views/database_view.dart';
+import 'package:mit_dir_utility/views/accreditation_view.dart';
 import 'package:mit_dir_utility/views/home_view.dart';
 import 'package:mit_dir_utility/views/signing_view.dart';
-import 'package:mit_dir_utility/views/runtime_logging_view.dart';
+import 'package:mit_dir_utility/views/dev_view.dart';
 import 'package:mit_dir_utility/views/super_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mit_dir_utility/views/timetable_view.dart';
@@ -17,7 +17,8 @@ class RoutingService {
 
   ScrollController scrollController = ScrollController();
 
-  static Map<String, Widget Function(BuildContext)> get routeBuilders => {
+  /// A map of all the route names as keys and the page widgets as values.
+  static Map<String, SidebarInterface Function(BuildContext)> get routeBuilders => {
         '/': (context) {
           const widget = HomeView();
 
@@ -29,19 +30,8 @@ class RoutingService {
 
           return widget;
         },
-        '/logs': (context) {
-          const widget = RuntimeLoggingView();
-
-          assert(widget is SidebarInterface);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}', onlyDebug: true);
-          });
-
-          return widget;
-        },
-        '/database': (context) {
-          const widget = DatabaseView();
+        '/akkreditierung': (context) {
+          const widget = AccreditationView();
 
           assert(widget is SidebarInterface);
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -62,8 +52,8 @@ class RoutingService {
 
           return widget;
         },
-        '/signing': (context) {
-          const widget = SigningView();
+        '/dev': (context) {
+          const widget = DevView();
 
           assert(widget is SidebarInterface);
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -73,17 +63,17 @@ class RoutingService {
 
           return widget;
         },
-        '/authorization': (context) {
-          const widget = AuthView();
+        // '/signing': (context) {
+        //   const widget = SigningView();
 
-          assert(widget is SidebarInterface);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
-            log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}', onlyDebug: true);
-          });
+        //   assert(widget is SidebarInterface);
+        //   WidgetsBinding.instance.addPostFrameCallback((_) {
+        //     Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
+        //     log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}', onlyDebug: true);
+        //   });
 
-          return widget;
-        },
+        //   return widget;
+        // },
       };
 
   static String titleFormRoutePath(String path) {
@@ -122,16 +112,11 @@ class RoutingService {
 
   static void navigateTo(String path) {
     if (!routeBuilders.keys.contains(path)) {
-      log('Path $path does not exist', onlyDebug: true);
+      log('Path $path does not exist', onlyDebug: false);
       return;
     }
 
     log('Going to ${titleFormRoutePath(path)}', onlyDebug: true);
-
-    if (path == '/') {
-      shellNavigatorKey.currentState!.popUntil((route) => route.isFirst);
-      return;
-    }
 
     GoRouter.of(shellNavigatorKey.currentContext!).go(path);
   }
@@ -233,16 +218,16 @@ class RoutingService {
 
   late final CustomRouteObserver _routeObserver = CustomRouteObserver(this);
 
-  void _updatePreviousPage(BuildContext context, String currentPath) {
-    _previousPage = routeBuilders[currentPath]?.call(context);
-  }
+  // void _updatePreviousPage(BuildContext context, String currentPath) {
+  //   _previousPage = routeBuilders[currentPath]?.call(context);
+  // }
 
-  void _updatePreviousPageOnPush(String? previousRouteName) {
-    if (previousRouteName != null) {
-      print(previousRouteName);
-      _previousPage = routeBuilders[previousRouteName]?.call(_rootNavigatorKey.currentContext!);
-    }
-  }
+  // void _updatePreviousPageOnPush(String? previousRouteName) {
+  //   if (previousRouteName != null) {
+  //     print(previousRouteName);
+  //     _previousPage = routeBuilders[previousRouteName]?.call(_rootNavigatorKey.currentContext!);
+  //   }
+  // }
 
   late final router = GoRouter(navigatorKey: _rootNavigatorKey, initialLocation: '/', routes: [
     ShellRoute(
@@ -270,7 +255,7 @@ class RoutingService {
                   return CustomTransitionPage(
                       key: state.pageKey,
                       transitionsBuilder: _transitionBuilder,
-                      child: Builder(builder: entry.value));
+                      child: Builder(builder: entry.value as Widget Function(BuildContext)));
                   // child: _getChild(entry.value, context));
                 }))
             .toList())
@@ -287,7 +272,7 @@ class CustomRouteObserver extends RouteObserver<PageRoute<dynamic>> {
     super.didPush(route, previousRoute);
     if (previousRoute is PageRoute) {
       // Update the previous page when a new route is pushed
-      _routingService._updatePreviousPageOnPush(previousRoute.settings.name);
+      // _routingService._updatePreviousPageOnPush(previousRoute.settings.name);
     }
   }
 

@@ -1,55 +1,59 @@
 import 'package:csv/csv.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:mit_dir_utility/models/user_model.dart';
 import 'package:mit_dir_utility/services/database_service.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
 
 class FilesystemService {
-  static pickFile() async {
+  static Future<List<List<dynamic>>?> pickCSVFile() async {
     FilePickerResult? filePickerResult = await FilePickerWeb.platform.pickFiles();
 
-    if (filePickerResult != null) {
-      log('File with name: ${filePickerResult.files[0].name} got picked.');
+    if (filePickerResult == null) return null;
 
-      final csvAsString = String.fromCharCodes(filePickerResult.files[0].bytes!);
+    log('File with name: ${filePickerResult.files[0].name} got picked.');
 
-      log('CSV as string is: $csvAsString');
+    final csvAsString = String.fromCharCodes(filePickerResult.files[0].bytes!);
 
-      log('The string is ${csvAsString.length} long.');
+    log('CSV as string is: $csvAsString');
 
-      final rows = const CsvToListConverter(eol: '\n')
-          .convert(csvAsString); // TODO: Find a way to detect the eol automatically.
+    log('The string is ${csvAsString.length} long.');
 
-      log('The list is ${rows.length} long.');
+    final rows = const CsvToListConverter(eol: '\n')
+        .convert(csvAsString); // TODO: Find a way to detect the eol automatically.
 
-      for (var i = 0; i < 10; i++) {
-        if (i == 0) continue;
+    log('The list is ${rows.length} long.');
 
-        log(rows[i].runtimeType);
+    final List<List<dynamic>> table = [];
+    // List<UserModel> users = [];
 
-        final collumn = rows[i];
+    for (var i = 0; i < 10; i++) {
+      // if (i == 0) continue;
 
-        log(collumn.runtimeType);
+      log(rows[i].runtimeType);
 
-        log(i);
+      final collumn = rows[i];
 
-        final stringList = (rows[i].map((e) => e.toString()).toList());
+      log(collumn.runtimeType);
 
-        log('This collumn has the type of: ${stringList.runtimeType}');
-        log('This collumn has the value of: $stringList');
+      log(i);
 
-        final user = UserModel.fromList(list: stringList);
+      final stringList = (rows[i].map((e) => e.toString()).toList());
 
-        try {
-          final firestoreResult = await DatabaseService.createMockUserInFBFireStore(user: user);
-          log(firestoreResult!);
-        } catch (e) {
-          log(e);
-        }
-      }
-    } else {
-      log('User canceled the picker');
+      log('This collumn has the type of: ${stringList.runtimeType}');
+      log('This collumn has the value of: $stringList');
+
+      table.add(stringList);
+
+      // final user = UserModel.fromList(list: stringList);
+      // users.add(user);
+
+      // try {
+      //   final firestoreResult = await DatabaseService.createMockUserInFBFireStore(user: user);
+      //   log(firestoreResult!);
+      // } catch (e) {
+      //   log(e);
+      // }
     }
+    return table;
   }
 }

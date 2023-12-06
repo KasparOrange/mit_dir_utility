@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mit_dir_utility/models/user_model.dart';
 import 'package:mit_dir_utility/modules/dialog_module.dart';
-import 'package:mit_dir_utility/modules/signing_module.dart';
 import 'package:mit_dir_utility/services/database_service.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
+import 'package:mit_dir_utility/services/theme_service.dart';
 import 'package:signature/signature.dart';
 
 class SignatureModule extends StatefulWidget {
@@ -59,7 +60,7 @@ class _SignatureModuleState extends State<SignatureModule> {
           ),
           actions: {
             'Close': () {
-              Navigator.of(context).pop();
+              GoRouter.of(context).pop();
             },
             'Delete': () async {
               await DatabaseService.deleteSignature(widget.user);
@@ -68,7 +69,7 @@ class _SignatureModuleState extends State<SignatureModule> {
 
               if (!mounted) return;
 
-              Navigator.of(context).pop();
+              GoRouter.of(context).pop();
             }
           },
         );
@@ -78,27 +79,38 @@ class _SignatureModuleState extends State<SignatureModule> {
 
   _takeSignatureDialoge(BuildContext context) {
     showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          child: SizedBox(
-            height: _dialogHeight,
-            width: _dialogWidth,
-            child: Column(
-              children: [
-                // SigningModule(user: widget.user, update: () => setState(() {})),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Close'),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+        context: context,
+        builder: (context) {
+          return DialogModule(
+              width: _dialogWidth,
+              height: _dialogHeight,
+              content: LayoutBuilder(builder: (context, constraints) {
+                return Signature(
+                  controller: _signatureController,
+                  backgroundColor: Colors.white,
+                  // Set the size based on the constraints provided by LayoutBuilder
+                  height: constraints.maxHeight,
+                  width: constraints.maxWidth,
+                );
+              }),
+              actions: {
+                'Close': () {
+                  GoRouter.of(context).pop();
+                },
+                'Save': () async {
+                  if (_signatureController.isEmpty) return;
+
+                  final signatureAsPngBytes = await _signatureController.toPngBytes();
+
+                  await DatabaseService.uploadSignature(widget.user, signatureAsPngBytes!);
+                  setState(() {});
+
+                  if (!mounted) return;
+
+                  GoRouter.of(context).pop();
+                }
+              });
+        });
   }
 
   @override
@@ -117,7 +129,8 @@ class _SignatureModuleState extends State<SignatureModule> {
 
           return ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: snapshot.data! ? Colors.green : Colors.red,
+              backgroundColor:
+                  snapshot.data! ? ThemeService.colors.ok : ThemeService.colors.error,
             ),
             onPressed: snapshot.data!
                 ? () => _showSignatureDialog(context)

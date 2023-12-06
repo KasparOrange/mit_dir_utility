@@ -16,31 +16,25 @@ class DatabaseService {
   static String get usersCollection => mocking ? 'mockUsers' : 'people';
   static String get signaturesBucket => mocking ? 'mockSignatures' : 'signatures';
 
-  // NOTE: NEW!
+  // NOTE: Signature
   static Future<String> uploadSignature(UserModel user, Uint8List bytes) async {
     final ref = fsi.ref().child('$signaturesBucket/${user.uid}_signature.png');
-
     await ref.putData(bytes);
-
     return await ref.getDownloadURL();
   }
 
-  
   /// Use to find out if a signature exists in the Firebase Storage.
   static Future<bool> doesSignatureExist(UserModel user) async {
     try {
       final ref = fsi.ref().child('$signaturesBucket/${user.uid}_signature.png');
-
       await ref.getMetadata();
-
-      return true; // File exists
+      return true; 
     } catch (e) {
       log('ERRROR while checking signature: $e', long: true, onlyDebug: true);
-      return false; // File does not exist
+      return false; 
     }
   }
 
-  // Donwload signature
   static Future<Uint8List?> downloadSignature(UserModel user) async {
     try {
       final ref = fsi.ref().child('$signaturesBucket/${user.uid}_signature.png');
@@ -52,7 +46,6 @@ class DatabaseService {
     }
   }
 
-  // Delete signature
   static Future<void> deleteSignature(UserModel user) async {
     try {
       final ref = fsi.ref().child('$signaturesBucket/${user.uid}_signature.png');
@@ -62,6 +55,57 @@ class DatabaseService {
       log('ERRROR while deleting signature: $e', long: true);
     }
   }
+
+  // NOTE: User
+  static Future<void> createUser(UserModel user) async {
+    try {
+      await ffi.collection(usersCollection).doc(user.uid).set(user.asMap);
+    } on FirebaseException catch (e) {
+      log('ERRROR while creating user: $e', long: true);
+    }
+  }
+
+  static Future<void> deleteUser(UserModel user) async {
+    try {
+      await ffi.collection(usersCollection).doc(user.uid).delete();
+    } on FirebaseException catch (e) {
+      log('ERRROR while deleting user: $e', long: true);
+    }
+  }
+
+  // TODO: Only update user when user exists in database.
+  static Future<void> updateUser(UserModel user) async {
+    try {
+      await ffi.collection(usersCollection).doc(user.uid).set(user.asMap);
+    } on FirebaseException catch (e) {
+      log('ERRROR while updating user: $e', long: true);
+    }
+  }
+
+  static Future<UserModel?> readUser(String uid) async {
+    try {
+      final snapshot = await ffi.collection(usersCollection).doc(uid).get();
+      final data = snapshot.data();
+      return UserModel.fromMap(map: data!);
+    } on FirebaseException catch (e) {
+      log('ERRROR while reading user: $e', long: true);
+      return null;
+    }
+  }
+
+  // import users from csv file
+  static Future<void> importUsers(List<UserModel> users) async {
+    try {
+      final batch = ffi.batch();
+      for (var user in users) {
+        batch.set(ffi.collection(usersCollection).doc(user.uid), user.asMap);
+      }
+      await batch.commit();
+    } on FirebaseException catch (e) {
+      log('ERRROR while importing users: $e', long: true);
+    }
+  }
+
 
   // NOTE: OLD!
   /// Return the donwload URL of the Signature.

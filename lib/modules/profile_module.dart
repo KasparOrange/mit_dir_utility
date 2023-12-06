@@ -5,16 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:ffloat_nullsafety/ffloat_nullsafety.dart';
 import 'package:mit_dir_utility/services/authentication_service.dart';
+import 'package:mit_dir_utility/services/theme_service.dart';
 import 'package:provider/provider.dart';
 
-class AppbarUserAreaModule extends StatefulWidget {
-  const AppbarUserAreaModule({super.key});
+class ProfileModule extends StatefulWidget {
+  const ProfileModule({super.key});
 
   @override
-  State<AppbarUserAreaModule> createState() => _AppbarUserAreaModuleState();
+  State<ProfileModule> createState() => _ProfileModuleState();
 }
 
-class _AppbarUserAreaModuleState extends State<AppbarUserAreaModule> {
+class _ProfileModuleState extends State<ProfileModule> {
   late final FFloatController _floatController;
   late final FocusNode _buttonFocusNode;
 
@@ -30,8 +31,10 @@ class _AppbarUserAreaModuleState extends State<AppbarUserAreaModule> {
     return FFloat(
       (setter, contentState) => Container(
           decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 139, 98, 20),
-              borderRadius: BorderRadius.circular(10)),
+              // color: const Color.fromARGB(255, 139, 98, 20),
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Theme.of(context).colorScheme.secondary),),
           width: 400,
           height: 200,
           child: Consumer<User?>(
@@ -49,7 +52,7 @@ class _AppbarUserAreaModuleState extends State<AppbarUserAreaModule> {
       color: Colors.transparent,
       igBackground: true,
       onDispose: () => _buttonFocusNode.unfocus(),
-      anchor: ElevatedButton(
+      anchor: TextButton(
         focusNode: _buttonFocusNode,
         onPressed: () {
           _buttonFocusNode.requestFocus();
@@ -72,9 +75,9 @@ class UsernameOrSignIn extends StatelessWidget {
           return const Text('Sign in', style: TextStyle(fontSize: 20));
         } else {
           return Center(
-              child: Text(value.displayName ?? value.email ?? "Anonymous",
-                  // textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 20)));
+              child: Text(
+            value.displayName ?? value.email ?? "Anonymous",
+          ));
         }
       },
     );
@@ -151,6 +154,7 @@ class SignOutAndProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton(
             onPressed: () async => await AuthenticationService.signOut(),
