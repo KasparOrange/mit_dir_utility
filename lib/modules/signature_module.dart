@@ -102,15 +102,18 @@ class _SignatureModuleState extends State<SignatureModule> {
           return DialogModule(
               width: _dialogWidth,
               height: _dialogHeight,
-              content: LayoutBuilder(builder: (context, constraints) {
-                return Signature(
-                  controller: _signatureController,
-                  backgroundColor: Colors.white,
-                  // Set the size based on the constraints provided by LayoutBuilder
-                  height: constraints.maxHeight,
-                  width: constraints.maxWidth,
-                );
-              }),
+              content: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LayoutBuilder(builder: (context, constraints) {
+                  return Signature(
+                    controller: _signatureController,
+                    backgroundColor: ThemeService.colors.linen,
+                    // Set the size based on the constraints provided by LayoutBuilder
+                    height: constraints.maxHeight,
+                    width: constraints.maxWidth,
+                  );
+                }),
+              ),
               actions: {
                 'Close': () {
                   GoRouter.of(context).pop();
