@@ -67,8 +67,9 @@ class ThemeService {
       ),
       labelStyle: const TextStyle(
         color: Colors.black,
-        fontSize: 16,
-        fontFamily: 'Arial',
+        fontSize: 20,
+        fontFamily: 'Willow',
+        letterSpacing: 1.5,
       ),
       hintStyle: const TextStyle(
         color: Colors.black,
@@ -144,7 +145,7 @@ class CustomColors {
 
   final Color oldPrimaryColor = const Color.fromARGB(255, 185, 124, 3);
   final Color oldSecondaryColor = const Color.fromARGB(255, 129, 85, 0);
-  final Color oldTertiaryColor = const Color.fromARGB(255, 255, 250, 187);
+  final Color oldTertiaryColor = Color.fromARGB(255, 245, 221, 166);
 
   final Color paynesGray = const Color.fromARGB(255, 87, 110, 135);
   final Color linen = const Color.fromARGB(255, 253, 245, 234);

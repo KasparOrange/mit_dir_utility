@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mit_dir_utility/models/user_model.dart';
+import 'package:mit_dir_utility/modules/dialog_module.dart';
 import 'package:mit_dir_utility/services/authentication_service.dart';
 import 'package:mit_dir_utility/services/database_service.dart';
 
@@ -80,56 +81,56 @@ class _UserEditorModuleState extends State<UserEditorModule> {
         setState(() => user.phone = value);
       });
 
+  late final _form = Center(
+    child: Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Form(
+          key: _userEditorFormStateGK,
+          child: Column(
+            children: [
+              Row(
+                children: [_formFieldFirstName, _formFieldLastName],
+              ),
+              const SizedBox(height: 20),
+              _formFieldEmail,
+              const SizedBox(height: 20),
+              _fromFieldPhone,
+              const SizedBox(height: 20),
+              const SizedBox(height: 20),
+              _formFieldDateOfBirth,
+              const SizedBox(height: 20),
+            ],
+          )),
+    ),
+  );
+
   final _userEditorFormStateGK = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Container(
-        padding: const EdgeInsets.all(50),
-        width: 1000,
-        height: 1000,
-        decoration: decoration,
-        child: Form(
-            key: _userEditorFormStateGK,
-            child: Column(
-              children: <Widget>[
-                Row(
-                  children: [_formFieldFirstName, _formFieldLastName],
-                ),
-                const SizedBox(height: 20),
-                _formFieldEmail,
-                const SizedBox(height: 20),
-                _fromFieldPhone,
-                const SizedBox(height: 20),
+    return TextButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) => DialogModule(content: _form, actions: {
+            'Close': () {
+              GoRouter.of(context).pop();
+            },
+            'Save': () async {
+              if (_userEditorFormStateGK.currentState!.validate()) {
+                _userEditorFormStateGK.currentState!.save();
 
-                const SizedBox(height: 20),
-                _formFieldDateOfBirth,
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          GoRouter.of(context).pop();
-                          DatabaseService.createPersonInFBFireStore(user: user);
-                        },
-                        child: const Text('Save')),
-                    ElevatedButton(
-                        onPressed: () {
-                          GoRouter.of(context).pop();
-                        },
-                        child: const Text('Back')),
-                  ],
-                ),
-                // Text(
-                //   // error,
-                //   'Error Placeholder',
-                //   style: const TextStyle(color: Colors.red, fontSize: 14),
-                // )
-              ],
-            )),
-      ),
+                if (!mounted) return;
+
+                GoRouter.of(context).pop();
+
+                DatabaseService.createUser(user);
+              }
+            }
+          }),
+        );
+      },
+      child: const Text('Create User'),
     );
   }
 }

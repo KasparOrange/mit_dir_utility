@@ -1,6 +1,16 @@
 import 'dart:html' as html;
 
-class NetworkStatusService {
+import 'package:flutter/material.dart';
+import 'package:mit_dir_utility/services/logging_service.dart';
+
+class NetworkStatusService with ChangeNotifier {
+  NetworkStatusService() {
+    startListening(onGoingOnline: () {
+      isOnline = true;
+    }, onGoingOffline: () {
+      isOnline = false;
+    });
+  }
   static int? get networkSpeed => html.window.navigator.connection?.downlink?.round();
 
   static int get networkType {
@@ -20,19 +30,26 @@ class NetworkStatusService {
     }
   }
 
+  static int secondsSinceLastConnection = 0;
 
-  static int secondsSinceLastConnection = 0;  
+  static bool? get isOnlineGetter => html.window.navigator.onLine;
 
-  static bool? get isOnline => html.window.navigator.onLine;
+  // NOTIPROP: isOnlin
+  bool _isOnline = isOnlineGetter ?? false;
+  bool get isOnline => _isOnline;
+  set isOnline(bool value) {
+    _isOnline = value;
+    notifyListeners();
+  }
 
-  static void startListening(Function onGoingOnline, Function onGoingOffline) {
+  void startListening({Function? onGoingOnline, Function? onGoingOffline}) {
     html.window.addEventListener('online', (event) {
-      onGoingOnline();
+      onGoingOnline?.call();
       print('Back online');
     });
 
     html.window.addEventListener('offline', (event) {
-      onGoingOffline();
+      onGoingOffline?.call();
       print('Went offline');
     });
   }

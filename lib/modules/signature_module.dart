@@ -40,41 +40,59 @@ class _SignatureModuleState extends State<SignatureModule> {
 
   _showSignatureDialog(BuildContext context) {
     showDialog(
-      context: context,
-      builder: (context) {
-        return DialogModule(
-          width: _dialogWidth,
-          height: _dialogHeight,
-          content: FutureBuilder(
-            future: DatabaseService.downloadSignature(widget.user),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Image.memory(snapshot.data!);
-              } else if (snapshot.hasError) {
-                log('ERROR while fetching signature: ${snapshot.error!}', long: true);
+        context: context,
+        builder: (context) {
+          return DialogModule(
+            width: _dialogWidth,
+            height: _dialogHeight,
+            content: FutureBuilder(
+              future: DatabaseService.downloadSignature(widget.user),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Image.memory(snapshot.data!);
+                } else if (snapshot.hasError) {
+                  log('ERROR while fetching signature: ${snapshot.error!}', long: true);
 
-                return const Icon(Icons.error);
-              }
-              return const CircularProgressIndicator();
+                  return const Icon(Icons.error);
+                }
+                return const CircularProgressIndicator();
+              },
+            ),
+            actions: {
+              'Close': () {
+                GoRouter.of(context).pop();
+              },
+              'Delete': () => showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                          icon: Icon(Icons.warning, color: ThemeService.colors.error),
+                          content: const Text('Are you sure you want to delete this signature?'),
+                          actionsAlignment: MainAxisAlignment.spaceAround,
+                          actions: [
+                            TextButton(
+                              onPressed: () => GoRouter.of(context).pop(),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                await DatabaseService.deleteSignature(widget.user);
+
+                                setState(() {});
+
+                                if (!mounted) return;
+
+                                GoRouter.of(context).pop();
+                                GoRouter.of(context).pop();
+                              },
+                              child: const Text('Delete'),
+                            )
+                          ]);
+                    },
+                  ),
             },
-          ),
-          actions: {
-            'Close': () {
-              GoRouter.of(context).pop();
-            },
-            'Delete': () async {
-              await DatabaseService.deleteSignature(widget.user);
-
-              setState(() {});
-
-              if (!mounted) return;
-
-              GoRouter.of(context).pop();
-            }
-          },
-        );
-      },
-    );
+          );
+        });
   }
 
   _takeSignatureDialoge(BuildContext context) {
@@ -130,15 +148,22 @@ class _SignatureModuleState extends State<SignatureModule> {
           return ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor:
-                  snapshot.data! ? ThemeService.colors.ok : ThemeService.colors.error,
+                  snapshot.data! ? ThemeService.colors.okLight : ThemeService.colors.errorLight,
+              side: const BorderSide(),
             ),
             onPressed: snapshot.data!
                 ? () => _showSignatureDialog(context)
                 : () => _takeSignatureDialoge(context),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset('icons/icons8-signature-50.png'),
-            ),
+          child: const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Image(image: AssetImage('icons/icons8-signature-50.png')),
+          ),
+
+            // Padding(
+            //   padding: EdgeInsets.all(8.0),
+            //   child: DecorationImage
+            //   AssetImage('icons/icons8-signature-50.png'),
+            // ),
           );
         });
   }

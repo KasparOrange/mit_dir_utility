@@ -45,6 +45,22 @@ class DatabaseViewState extends ChangeNotifier {
     notifyListeners();
   }
 
+  // NOTIPROP: totalUserAmount
+  int _totalUserAmount = 0;
+  int get totalUserAmount => _totalUserAmount;
+  set totalUserAmount(int value) {
+    _totalUserAmount = value;
+    notifyListeners();
+  }
+
+  // NOTIPROP: filteredUserAmount
+  int _filteredUserAmount = 0;
+  int get filteredUserAmount => _filteredUserAmount;
+  set filteredUserAmount(int value) {
+    _filteredUserAmount = value;
+    notifyListeners();
+  }
+
   update() {
     notifyListeners();
   }

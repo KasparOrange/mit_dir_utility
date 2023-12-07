@@ -1,3 +1,4 @@
+import 'package:date_time_format/date_time_format.dart';
 import 'package:flutter/material.dart';
 import 'package:mit_dir_utility/models/user_model.dart';
 import 'package:mit_dir_utility/modules/signature_module.dart';
@@ -26,9 +27,21 @@ class _UserListTileModuleState extends State<UserListTileModule> {
         borderRadius: BorderRadius.circular(5),
       ),
       child: ListTile(
-        leading: const Icon(Icons.person),
-        title: Text('${widget.user.firstName}  ${widget.user.lastName}'),
-        subtitle: Text(widget.user.email),
+        leading: SizedBox(
+          width: 300,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '${widget.user.firstName} ${widget.user.lastName}',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+          ),
+        ),
+        title: Text('Date of birth: ${widget.user.dateOfBirth.format('F j, Y')}'),
+        subtitle: Text('Contact: ${widget.user.email} ${widget.user.phone}'),
         trailing: FutureBuilder(
             future: DatabaseService.doesSignatureExist(widget.user),
             builder: (context, snapshot) {

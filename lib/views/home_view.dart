@@ -9,7 +9,6 @@ class HomeView extends StatelessWidget implements SidebarInterface {
 
   @override
   Widget build(BuildContext context) {
-    print('Building HomeView');
     return const Center(
       child: Text(''),
     );

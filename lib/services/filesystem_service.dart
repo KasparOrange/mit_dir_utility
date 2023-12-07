@@ -6,6 +6,25 @@ import 'package:mit_dir_utility/services/logging_service.dart';
 
 class FilesystemService {
   static Future<List<List<dynamic>>?> pickCSVFile() async {
+
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['csv'],
+      );
+      if (result == null) return null;
+      final csvAsString = String.fromCharCodes(result.files.first.bytes!);
+      final rows = const CsvToListConverter(eol: '\n').convert(csvAsString);
+      final List<List<dynamic>> table = [];
+      for (var i = 0; i < rows.length; i++) {
+        final stringList = (rows[i].map((e) => e.toString()).toList());
+        table.add(stringList);
+      }
+      return table;
+    } catch (e) {
+      log('ERROR: While picking a file this happend: $e', onlyDebug: true, long: true);
+      return null;
+    }
     FilePickerResult? filePickerResult = await FilePickerWeb.platform.pickFiles();
 
     if (filePickerResult == null) return null;

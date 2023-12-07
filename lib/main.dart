@@ -6,10 +6,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mit_dir_utility/firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'package:mit_dir_utility/globals.dart';
 import 'package:mit_dir_utility/services/authentication_service.dart';
 import 'package:mit_dir_utility/services/keyboard_service.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
+import 'package:mit_dir_utility/services/network_status_service.dart';
 import 'package:mit_dir_utility/services/routing_service.dart';
 import 'package:mit_dir_utility/services/runtime_logging_service.dart';
 import 'package:mit_dir_utility/services/theme_service.dart';
@@ -65,6 +65,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => RuntimeLoggingService()),
         ChangeNotifierProvider(create: (context) => SidebarState()),
         ChangeNotifierProvider(create: (context) => DatabaseViewState()),
+        ChangeNotifierProvider(create: (context) => NetworkStatusService()),
       ],
       child: Builder(builder: (context) {
         log('Building MaterialApp', onlyDebug: true);

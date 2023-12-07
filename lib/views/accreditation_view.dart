@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:mit_dir_utility/interfaces.dart';
 import 'package:mit_dir_utility/models/user_model.dart';
@@ -22,27 +20,11 @@ class AccreditationView extends StatefulWidget implements SidebarInterface {
   @override
   List<Widget> get sidebarWidgets {
     return [
-      Builder(builder: (context) {
-        return TextButton(
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  // return Material(child: UserEditorModule(user: UserModel.empty()));
-                  return DialogModule(content: UserEditorModule(user: UserModel.empty()), actions: {
-                    'Cancel': () => Navigator.pop(context),
-                  });
-                });
-          },
-          child: const Text('Add Person'),
-        );
-      }),
-      Builder(builder: (context) {
-        return CSVImporterModule();
-      }),
+      UserEditorModule(user: UserModel.empty()),
+      const CSVImporterModule(),
       Builder(builder: (context) {
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(10),
           child: TextField(
             onChanged: (value) {
               var state = Provider.of<DatabaseViewState>(context, listen: false);
@@ -50,6 +32,7 @@ class AccreditationView extends StatefulWidget implements SidebarInterface {
               if (value.isEmpty) {
                 // If the search field is empty, display all users
                 state.filteredUsers = state.users;
+                state.filteredUserAmount = state.users.length;
                 log('Value was empty', long: true, onlyDebug: false);
               } else {
                 // Filter the users list based on the search query
@@ -64,6 +47,7 @@ class AccreditationView extends StatefulWidget implements SidebarInterface {
                         user.nickName.toLowerCase().contains(lowercaseQuery))
                     .toList();
                 state.filteredUsers = newFilteredUsers;
+                state.filteredUserAmount = newFilteredUsers.length;
                 log(newFilteredUsers.length, long: true, onlyDebug: true);
               }
             },
@@ -74,10 +58,16 @@ class AccreditationView extends StatefulWidget implements SidebarInterface {
           ),
         );
       }),
+      Builder(builder: (context) {
+        return Text(
+            'Total: ${Provider.of<DatabaseViewState>(context).totalUserAmount}'
+            ' | Filtered: ${Provider.of<DatabaseViewState>(context).filteredUserAmount}',
+            // style: const TextStyle(fontFamily: 'Willow')
+            );
+      }),
     ];
   }
 }
-
 
 class _AccreditationViewState extends State<AccreditationView> {
   bool initialized = false;
@@ -94,23 +84,25 @@ class _AccreditationViewState extends State<AccreditationView> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-      
+
           if (snapshot.hasError) {
             return ErrorWidget('An error occured! Are you signed in?\n${snapshot.error}');
           }
-      
+
           state.users = snapshot.data!;
-      
+
           // The first time the stream is loaded, set the filteredUsers to the users to
           // display all users. If this is not done, no users will be displayed until the
           // search field is used.
           if (!initialized) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               state.filteredUsers = state.users;
+              state.totalUserAmount = state.users.length;
+              state.filteredUserAmount = state.users.length;
             });
             initialized = true;
           }
-      
+
           return ListView.builder(
             itemCount: state.filteredUsers.length,
             itemBuilder: (context, index) {

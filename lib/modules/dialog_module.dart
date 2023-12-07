@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mit_dir_utility/globals.dart';
+import 'package:mit_dir_utility/services/theme_service.dart';
 
 class DialogModule extends StatelessWidget {
   const DialogModule(
@@ -17,6 +18,7 @@ class DialogModule extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: ThemeService.colors.linen,
       shape: RoundedRectangleBorder(
         side: const BorderSide(color: Colors.black),
         borderRadius: BorderRadius.circular(5)),

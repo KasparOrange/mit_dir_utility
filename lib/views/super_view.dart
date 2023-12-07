@@ -4,9 +4,11 @@ import 'package:mit_dir_utility/modules/color_palette_module.dart';
 import 'package:mit_dir_utility/modules/profile_module.dart';
 import 'package:mit_dir_utility/modules/background_logo_module.dart';
 import 'package:mit_dir_utility/services/keyboard_service.dart';
+import 'package:mit_dir_utility/services/network_status_service.dart';
 import 'package:mit_dir_utility/services/routing_service.dart';
 import 'package:mit_dir_utility/modules/sidebar_module.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mit_dir_utility/services/theme_service.dart';
 import 'package:mit_dir_utility/states/sidebar_state.dart';
 import 'package:provider/provider.dart';
 
@@ -39,7 +41,6 @@ class _SuperViewState extends State<SuperView> {
                 1000, // TODO: Make this depend on the size of the buttons. MaterialButton min width 88. Make TextButtonStyle so.
             leading: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                // children: routingService.routePaths.map((e) {
                 children: [
                   ...RoutingService.routeBuilders.keys.map((e) {
                     Color? color;
@@ -58,7 +59,7 @@ class _SuperViewState extends State<SuperView> {
                         'assets/images/logo_brown.png',
                         color: Colors.black,
                       );
-                      padding = const EdgeInsets.only(left: 10, right: 10);
+                      padding = const EdgeInsets.all(12);
                     } else {
                       child = Text(RoutingService.titleFormRoutePath(e));
                     }
@@ -69,15 +70,28 @@ class _SuperViewState extends State<SuperView> {
                         elevation: elevation,
                         padding: padding,
                       ),
-
                       child: child,
                     );
                   }).toList(),
                 ]),
-            actions: const [
-              Tooltip(message: 'SHIFT + J = Left\nSHIFT + K = Right', child: Icon(Icons.keyboard)),
-              SizedBox(width: 30),
-              ProfileModule(),
+            actions: [
+              // Container(
+              //     decoration: BoxDecoration(
+              //   shape: BoxShape.circle,
+              //   color: Colors.red,
+              // )),
+              Consumer<NetworkStatusService>(builder: (context, value, child) {
+                return Container(
+                  width: 20,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 2),
+                  shape: BoxShape.circle,
+                  color: value.isOnline ? ThemeService.colors.okLight : ThemeService.colors.errorLight,
+                ));
+              }),
+              // Tooltip(message: 'SHIFT + J = Left\nSHIFT + K = Right', child: Icon(Icons.keyboard)),
+              const SizedBox(width: 30),
+              const ProfileModule(),
             ],
           ),
           body: Builder(builder: (context) {
@@ -96,14 +110,19 @@ class _SuperViewState extends State<SuperView> {
                 Expanded(
                   child: Stack(children: [
                     const BackgroundLogoModule(),
-                    Column(children: [
-                      const SizedBox(height: 5),
-                      Expanded(
-                        child: Builder(builder: (context) {
-                          return widget.child;
-                        }),
-                      ),
-                    ],
+                    Column(
+                      children: [
+                        const SizedBox(height: 5),
+                        Expanded(
+                          child: SelectableRegion(
+                            focusNode: FocusNode(),
+                            selectionControls: MaterialTextSelectionControls(),
+                            child: Builder(builder: (context) {
+                              return widget.child;
+                            }),
+                          ),
+                        ),
+                      ],
                     ),
                   ]),
                 ),

@@ -34,11 +34,11 @@ class _SigningViewState extends State<SigningView>  {
     onDrawStart: () {},
     onDrawEnd: () {},
   );
+
   final TextEditingController _textEditingController = TextEditingController();
   final TextEditingController _selectionTextEditingController = TextEditingController();
   final FocusNode _selectionFocusNode = FocusNode();
   
-
   final GlobalKey _buttonKey = GlobalKey();
 
   bool loading = false;
