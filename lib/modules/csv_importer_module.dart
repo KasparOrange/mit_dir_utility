@@ -10,6 +10,8 @@ import 'package:mit_dir_utility/services/database_service.dart';
 import 'package:mit_dir_utility/services/filesystem_service.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
 import 'package:mit_dir_utility/services/theme_service.dart';
+import 'package:mit_dir_utility/states/database_view_state.dart';
+import 'package:provider/provider.dart';
 
 class CSVImporterModule extends StatelessWidget {
   const CSVImporterModule({super.key});
@@ -86,12 +88,26 @@ class _CSVImportDialogState extends State<CSVImportDialog> {
   _importData() async {
     setState(() => isLoading = true);
     try {
+      final List<UserModel> users = [];    
       for (var row in tableData!.sublist(1)) {
         final stringList = (row.map((e) => e.toString()).toList());
 
-        await DatabaseService.createUser(UserModel.fromList(list: stringList));
+        final user = UserModel.fromList(list: stringList);
+
+        log('Importing user: $user', long: true, onlyDebug: false);
+
+        // await DatabaseService.createUser(user);
+
+        users.add(user);
       }
+
+      await DatabaseService.importUsers(users);
+
       if (!mounted) return;
+
+      Provider.of<DatabaseViewState>(context)
+        ..filteredUsers.addAll(users)
+        ..update();
 
       GoRouter.of(context).pop();
     } catch (error) {
@@ -137,7 +153,7 @@ class _CSVImportDialogState extends State<CSVImportDialog> {
           isLoading = false;
         });
       }
-      log('Finished picking CSV file. Message: $message. Table data: $tableData.', long: true);
+      log('Finished picking CSV file. Message: $message. Table data: $tableData.', long: true, onlyDebug: true);
     }
   }
 
@@ -185,7 +201,7 @@ class _CSVImportDialogState extends State<CSVImportDialog> {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextButton(
-                                  // style: TextButton.styleFrom(
+                                 // style: TextButton.styleFrom(
                                   //     backgroundColor: Colors.),
                                   onPressed: e.value,
                                   child: Text(

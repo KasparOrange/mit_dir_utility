@@ -59,7 +59,7 @@ class DatabaseService {
   // NOTE: User
   static Future<void> createUser(UserModel user) async {
     try {
-      await ffi.collection(usersCollection).doc(user.uid).set(user.asMap);
+      await ffi.collection(usersCollection).doc().set(user.asMap);
     } on FirebaseException catch (e) {
       log('ERRROR while creating user: $e', long: true);
     }
@@ -98,7 +98,7 @@ class DatabaseService {
     try {
       final batch = ffi.batch();
       for (var user in users) {
-        batch.set(ffi.collection(usersCollection).doc(user.uid), user.asMap);
+        batch.set(ffi.collection(usersCollection).doc(), user.asMap);
       }
       await batch.commit();
     } on FirebaseException catch (e) {

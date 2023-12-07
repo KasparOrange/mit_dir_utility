@@ -111,4 +111,8 @@ class UserModel {
       'uid': uid,
     };
   }
+
+  @override
+  toString() => 'UserModel: $firstName $lastName $uid';
+
 }

@@ -20,7 +20,11 @@ class AccreditationView extends StatefulWidget implements SidebarInterface {
   @override
   List<Widget> get sidebarWidgets {
     return [
-      UserEditorModule(user: UserModel.empty()),
+      Builder(
+        builder: (context) {
+          return UserEditorModule(user: UserModel.empty());
+        }
+      ),
       const CSVImporterModule(),
       Builder(builder: (context) {
         return Padding(
@@ -60,10 +64,10 @@ class AccreditationView extends StatefulWidget implements SidebarInterface {
       }),
       Builder(builder: (context) {
         return Text(
-            'Total: ${Provider.of<DatabaseViewState>(context).totalUserAmount}'
-            ' | Filtered: ${Provider.of<DatabaseViewState>(context).filteredUserAmount}',
-            // style: const TextStyle(fontFamily: 'Willow')
-            );
+          'Total: ${Provider.of<DatabaseViewState>(context).totalUserAmount}'
+          ' | Filtered: ${Provider.of<DatabaseViewState>(context).filteredUserAmount}',
+          // style: const TextStyle(fontFamily: 'Willow')
+        );
       }),
     ];
   }
@@ -71,6 +75,8 @@ class AccreditationView extends StatefulWidget implements SidebarInterface {
 
 class _AccreditationViewState extends State<AccreditationView> {
   bool initialized = false;
+
+  update() => setState(() {});
 
   @override
   Widget build(BuildContext context) {

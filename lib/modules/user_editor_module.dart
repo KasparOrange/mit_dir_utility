@@ -6,6 +6,9 @@ import 'package:mit_dir_utility/models/user_model.dart';
 import 'package:mit_dir_utility/modules/dialog_module.dart';
 import 'package:mit_dir_utility/services/authentication_service.dart';
 import 'package:mit_dir_utility/services/database_service.dart';
+import 'package:mit_dir_utility/services/logging_service.dart';
+import 'package:mit_dir_utility/states/database_view_state.dart';
+import 'package:provider/provider.dart';
 
 class UserEditorModule extends StatefulWidget {
   const UserEditorModule({super.key, required this.user});
@@ -125,6 +128,10 @@ class _UserEditorModuleState extends State<UserEditorModule> {
                 GoRouter.of(context).pop();
 
                 DatabaseService.createUser(user);
+
+                Provider.of<DatabaseViewState>(context, listen: false).filteredUsers.add(user);
+
+                log('User Created: ${user.firstName} ${user.lastName}');
               }
             }
           }),
