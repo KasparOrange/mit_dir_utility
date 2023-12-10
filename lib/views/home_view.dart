@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:mit_dir_utility/interfaces.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatelessWidget implements SidebarInterface {
   const HomeView({super.key});
 
   @override
+  List<Widget> get sidebarWidgets => [];
+
+  @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('HomeView'),);
+    return const Center(
+      child: Text(''),
+    );
   }
 }

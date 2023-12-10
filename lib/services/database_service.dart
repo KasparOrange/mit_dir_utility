@@ -2,15 +2,113 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:mit_dir_utility/models/user_model.dart';
+import 'package:mit_dir_utility/services/logging_service.dart';
 
 class DatabaseService {
   static FirebaseFirestore get ffi => FirebaseFirestore.instance;
   static FirebaseStorage get fsi => FirebaseStorage.instance;
 
-  /// Retrurn the donwload URL of the Signature.
+  static bool mocking = true;
+  static String get usersCollection => mocking ? 'mockUsers' : 'people';
+  static String get signaturesBucket => mocking ? 'mockSignatures' : 'signatures';
+
+  // NOTE: Signature
+  static Future<String> uploadSignature(UserModel user, Uint8List bytes) async {
+    final ref = fsi.ref().child('$signaturesBucket/${user.uid}_signature.png');
+    await ref.putData(bytes);
+    return await ref.getDownloadURL();
+  }
+
+  /// Use to find out if a signature exists in the Firebase Storage.
+  static Future<bool> doesSignatureExist(UserModel user) async {
+    try {
+      final ref = fsi.ref().child('$signaturesBucket/${user.uid}_signature.png');
+      await ref.getMetadata();
+      return true; 
+    } catch (e) {
+      log('ERRROR while checking signature: $e', long: true, onlyDebug: true);
+      return false; 
+    }
+  }
+
+  static Future<Uint8List?> downloadSignature(UserModel user) async {
+    try {
+      final ref = fsi.ref().child('$signaturesBucket/${user.uid}_signature.png');
+
+      return await ref.getData();
+    } on FirebaseException catch (e) {
+      log('ERRROR while downloading signature: $e', long: true);
+      return null;
+    }
+  }
+
+  static Future<void> deleteSignature(UserModel user) async {
+    try {
+      final ref = fsi.ref().child('$signaturesBucket/${user.uid}_signature.png');
+
+      await ref.delete();
+    } on FirebaseException catch (e) {
+      log('ERRROR while deleting signature: $e', long: true);
+    }
+  }
+
+  // NOTE: User
+  static Future<void> createUser(UserModel user) async {
+    try {
+      await ffi.collection(usersCollection).doc().set(user.asMap);
+    } on FirebaseException catch (e) {
+      log('ERRROR while creating user: $e', long: true);
+    }
+  }
+
+  static Future<void> deleteUser(UserModel user) async {
+    try {
+      await ffi.collection(usersCollection).doc(user.uid).delete();
+    } on FirebaseException catch (e) {
+      log('ERRROR while deleting user: $e', long: true);
+    }
+  }
+
+  // TODO: Only update user when user exists in database.
+  static Future<void> updateUser(UserModel user) async {
+    try {
+      await ffi.collection(usersCollection).doc(user.uid).set(user.asMap);
+    } on FirebaseException catch (e) {
+      log('ERRROR while updating user: $e', long: true);
+    }
+  }
+
+  static Future<UserModel?> readUser(String uid) async {
+    try {
+      final snapshot = await ffi.collection(usersCollection).doc(uid).get();
+      final data = snapshot.data();
+      return UserModel.fromMap(map: data!);
+    } on FirebaseException catch (e) {
+      log('ERRROR while reading user: $e', long: true);
+      return null;
+    }
+  }
+
+  // import users from csv file
+  static Future<void> importUsers(List<UserModel> users) async {
+    try {
+      final batch = ffi.batch();
+      for (var user in users) {
+        batch.set(ffi.collection(usersCollection).doc(), user.asMap);
+      }
+      await batch.commit();
+    } on FirebaseException catch (e) {
+      log('ERRROR while importing users: $e', long: true);
+    }
+  }
+
+
+  // NOTE: OLD!
+  /// Return the donwload URL of the Signature.
   static Future<String> uploadSignatureToFBStorage(String name, Uint8List bytes) async {
     final randomNumber = Random().nextInt(9000) + 1000; // TODO: Change to Firebase Global ID.
 
@@ -56,8 +154,24 @@ class DatabaseService {
   }
 
   static Future createPersonInFBFireStore({required UserModel user}) async {
-    return await ffi.collection('people').doc(user.uid).set(user.asMap); 
+    return await ffi.collection('people').doc(user.uid).set(user.asMap);
   }
+
+  static Future createMockUserInFBFireStore({required UserModel user}) async {
+    return await ffi.collection('mockUsers').doc().set(user.asMap);
+  }
+
+  static Stream<List<UserModel>> get userStream =>
+      ffi.collection(usersCollection).snapshots().map((snapshot) => snapshot.docs.map((doc) {
+            // print(doc.data());
+            return UserModel.fromMap(map: doc.data());
+          }).toList());
+
+  static Future<List<UserModel>> get users async {
+    final snapshot = await ffi.collection(usersCollection).get();
+    return snapshot.docs.map((doc) => UserModel.fromMap(map: doc.data())).toList();
+  }
+
   //   Future _uploadImageToFBStorage(String name, Uint8List bytes) async {
   //   final randomNumber = Random().nextInt(9000) + 1000;
 

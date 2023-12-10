@@ -10,18 +10,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:mit_dir_utility/interfaces.dart';
 import 'package:mit_dir_utility/modules/loading_module.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:signature/signature.dart';
 
-class SigningView extends StatefulWidget {
+class SigningView extends StatefulWidget implements SidebarInterface {
   const SigningView({super.key});
 
   @override
   State<SigningView> createState() => _SigningViewState();
+
+  @override
+  List<Widget> get sidebarWidgets => [];
 }
 
-class _SigningViewState extends State<SigningView> {
+class _SigningViewState extends State<SigningView>  {
   final SignatureController _signatureController = SignatureController(
     penStrokeWidth: 4,
     penColor: Colors.black,
@@ -30,9 +34,11 @@ class _SigningViewState extends State<SigningView> {
     onDrawStart: () {},
     onDrawEnd: () {},
   );
+
   final TextEditingController _textEditingController = TextEditingController();
   final TextEditingController _selectionTextEditingController = TextEditingController();
   final FocusNode _selectionFocusNode = FocusNode();
+  
   final GlobalKey _buttonKey = GlobalKey();
 
   bool loading = false;
@@ -310,7 +316,7 @@ class _SigningViewState extends State<SigningView> {
             );
           })
         ]),
-        Align(alignment: Alignment.topLeft, child: const Text('Verision: 0.0.1')),
+        Align(alignment: Alignment.topLeft, child: const Text('Version: 0.0.1')),
       ]);
     }
   }

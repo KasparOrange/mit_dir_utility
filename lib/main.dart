@@ -1,19 +1,35 @@
+import 'dart:html' as html;
+import 'dart:js_util' as js_util;
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mit_dir_utility/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:mit_dir_utility/services/authentication_service.dart';
 import 'package:mit_dir_utility/services/keyboard_service.dart';
+import 'package:mit_dir_utility/services/logging_service.dart';
+import 'package:mit_dir_utility/services/network_status_service.dart';
 import 'package:mit_dir_utility/services/routing_service.dart';
 import 'package:mit_dir_utility/services/runtime_logging_service.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
+  // Prevent the default right-click menu in the entire app
+  js_util.callMethod(html.window, 'addEventListener', [
+    'contextmenu',
+    js_util.allowInterop((html.Event event) {
+      event.preventDefault();
+    })
+  ]);
+
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // await FirebaseAuth.instance.signInAnonymously();
+  // Set the firebase setting with persistence enabled
+  // TODO: Set the size for the cache
+  FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
 
   runApp(const MyApp());
 }
@@ -40,51 +56,23 @@ class _MyAppState extends State<MyApp> {
           value: AuthenticationService().user,
           initialData: null,
         ),
-        // StreamProvider<QuerySnapshot?>.value(value: DatabaseService().posts, initialData: null),
         Provider.value(value: _routingService),
         Provider.value(value: _keyboardService),
-        // Provider.value(value: _databaseService),
         Provider.value(value: _authService),
-        // ListenableProvider.value(value: _themeService),
         ChangeNotifierProvider(create: (context) => RuntimeLoggingService()),
+        ChangeNotifierProvider(create: (context) => SidebarState()),
+        ChangeNotifierProvider(create: (context) => DatabaseViewState()),
+        ChangeNotifierProvider(create: (context) => NetworkStatusService()),
       ],
       child: Builder(builder: (context) {
-        // final themeService = Provider.of<ThemeService>(context);
+        log('Building MaterialApp', onlyDebug: true);
         return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            routerConfig: _routingService.router,
-            title: 'MitWare',
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 185, 124, 3)),
-              // theme: themeService.lightTheme,
-              // darkTheme: themeService.darkTheme,
-              // themeMode: themeService.themeMode,
-            ));
+          debugShowCheckedModeBanner: false,
+          routerConfig: _routingService.router,
+          title: 'MitWare',
+          theme: ThemeService.mainTheme,
+        );
       }),
     );
-    // return MaterialApp(
-    //   debugShowCheckedModeBanner: false,
-    //   title: 'Flutter Demo',
-    //   theme: ThemeData(
-    //     colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 185, 124, 3)),
-    //   ),
-    //   routes: {
-    //     '/': (context) => Scaffold(
-    //         // drawer: DrawerView(),
-    //         // appBar: AppBar(),
-
-    //         floatingActionButton: FloatingActionButton.small(
-    //           onPressed: () {
-    //             print('sfsd');
-    //             Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoggingView()));
-    //           },
-    //           child: const Icon(Icons.info_outline),
-    //         ),
-    //         floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
-    //         body: HomeView()),
-    //     '/logs': (context) => LoggingView(),
-    //     '/signIn': (context) => AuthView(),
-    //   },
-    // );
   }
 }

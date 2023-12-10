@@ -1,14 +1,59 @@
 import 'dart:developer' as dev;
 
+import 'package:flutter/material.dart';
+import 'package:mit_dir_utility/globals.dart';
+
 /// !!! Best Logger EUW !!!
 ///
 /// Outputs the [object] as a string to the console.
 ///
 /// Includes file name, linenumber and function name.
-void log(Object object) {
+///
+/// If [onlyDebug] is true (de)
+void log(Object object,
+    {bool onlyDebug = false, bool long = false, String name = '', Error? error}) {
   var stackTrace = _getStackTrace();
 
-  dev.log("$stackTrace :-> $object");
+  const int maxChunkSize = 110; // Define a suitable chunk size
+
+  if (!long) {
+    if (!onlyDebug) {
+      dev.log("$stackTrace :-> $object", name: name, error: error);
+      return;
+    } else if (debugMode) {
+      dev.log("$stackTrace :-> $object", name: name, error: error);
+      return;
+    }
+  }
+
+  final formattedMessage = "$stackTrace :-> $object";
+
+  if (!onlyDebug) {
+    for (int i = 0; i < formattedMessage.length; i += maxChunkSize) {
+      dev.log(
+          formattedMessage.substring(
+              i,
+              i + maxChunkSize > formattedMessage.length
+                  ? formattedMessage.length
+                  : i + maxChunkSize),
+          name: name,
+          error: error);
+    }
+    return;
+  } else if (debugMode) {
+    for (int i = 0; i < formattedMessage.length; i += maxChunkSize) {
+      dev.log(
+          formattedMessage.substring(
+              i,
+              i + maxChunkSize > formattedMessage.length
+                  ? formattedMessage.length
+                  : i + maxChunkSize),
+          name: name,
+          error: error);
+    }
+    return;
+  }
+  // dev.log("$stackTrace :-> $object");
 }
 
 String _getStackTrace() {

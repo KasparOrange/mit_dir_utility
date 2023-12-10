@@ -20,6 +20,7 @@ class UtilityService {
     GestureBinding.instance.handlePointerEvent(PointerUpEvent(position: position));
   }
 
+
   // NOTE: For testing loading animations.
   // Future _fakeLoading() async {
   //   setState(() {

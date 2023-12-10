@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:mit_dir_utility/interfaces.dart';
 import 'package:mit_dir_utility/services/authentication_service.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
 // import 'package:provider/provider.dart';
 
-class AuthView extends StatefulWidget {
+class AuthView extends StatefulWidget implements SidebarInterface {
   const AuthView({super.key});
 
   @override
   State<AuthView> createState() => _AuthViewState();
+
+  @override
+  List<Widget> get sidebarWidgets {
+    return [const Text("Authview Sidebar")];
+  }
 }
 
 class _AuthViewState extends State<AuthView> {
