@@ -109,7 +109,7 @@ class _AuthViewState extends State<AuthView> {
                   onPressed: () {
                     AuthenticationService.signInWithEmailAndPassword(email, password);
                   },
-                  child: Text('Sign in'))
+                  child: const Text('Sign in'))
             ],
           )),
     );

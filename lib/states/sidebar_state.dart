@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:mit_dir_utility/services/logging_service.dart';
 
 class SidebarState extends ChangeNotifier {
   // NOTIPROP: widgets

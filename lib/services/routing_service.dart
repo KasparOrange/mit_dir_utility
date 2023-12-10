@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mit_dir_utility/interfaces.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
 import 'package:mit_dir_utility/states/sidebar_state.dart';
-import 'package:mit_dir_utility/views/authentication_view.dart';
 import 'package:mit_dir_utility/views/accreditation_view.dart';
 import 'package:mit_dir_utility/views/home_view.dart';
-import 'package:mit_dir_utility/views/signing_view.dart';
 import 'package:mit_dir_utility/views/dev_view.dart';
 import 'package:mit_dir_utility/views/super_view.dart';
 import 'package:go_router/go_router.dart';
@@ -22,7 +20,6 @@ class RoutingService {
         '/': (context) {
           const widget = HomeView();
 
-          assert(widget is SidebarInterface);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
             log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}', onlyDebug: true);
@@ -33,7 +30,6 @@ class RoutingService {
         '/akkreditierung': (context) {
           const widget = AccreditationView();
 
-          assert(widget is SidebarInterface);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
             log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}', onlyDebug: true);
@@ -44,7 +40,6 @@ class RoutingService {
         '/timetable': (context) {
           const widget = TimetableView();
 
-          assert(widget is SidebarInterface);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
             log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}', onlyDebug: true);
@@ -55,7 +50,6 @@ class RoutingService {
         '/dev': (context) {
           const widget = DevView();
 
-          assert(widget is SidebarInterface);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Provider.of<SidebarState>(context, listen: false).widgets = widget.sidebarWidgets;
             log('EXTERN Setting sidebar widgets to: ${widget.sidebarWidgets}', onlyDebug: true);
@@ -87,7 +81,8 @@ class RoutingService {
   static void navigateLeft() {
     final currentContext = shellNavigatorKey.currentContext!;
     final currentRouteIndex =
-        routeBuilders.keys.toList().indexOf(GoRouter.of(currentContext).location);
+        routeBuilders.keys.toList().indexOf(GoRouterState.of(currentContext).matchedLocation);
+        
     final leftRouteIndex = currentRouteIndex - 1;
 
     final leftRoute = routeBuilders.keys.toList()[leftRouteIndex];
@@ -100,7 +95,7 @@ class RoutingService {
   static void navigateRight() {
     final currentContext = shellNavigatorKey.currentContext!;
     final currentRouteIndex =
-        routeBuilders.keys.toList().indexOf(GoRouter.of(currentContext).location);
+        routeBuilders.keys.toList().indexOf(GoRouterState.of(currentContext).matchedLocation);
     final rightRouteIndex = currentRouteIndex + 1;
 
     final rightRoute = routeBuilders.keys.toList()[rightRouteIndex];
@@ -121,9 +116,9 @@ class RoutingService {
     GoRouter.of(shellNavigatorKey.currentContext!).go(path);
   }
 
-  //   // final currentRouteIndex = _routeService.routePaths.indexOf(GoRouter.of(context).location);
+  //   // final currentRouteIndex = _routeService.routePaths.indexOf(GoRouterState.of(context).location);
   //   final currentRouteIndex =
-  //       RoutingService.routeBuilders.keys.toList().indexOf(GoRouter.of(context).location);
+  //       RoutingService.routeBuilders.keys.toList().indexOf(GoRouterState.of(context).location);
 
   //   if (event.physicalKey == PhysicalKeyboardKey.keyJ) {
   //     // RoutingService.goLeft();

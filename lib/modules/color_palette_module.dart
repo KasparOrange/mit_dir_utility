@@ -11,7 +11,7 @@ class ColorPaletteModule extends StatelessWidget {
       color: color,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-        child: Center(child: Text(text ?? '', style: TextStyle(overflow:  TextOverflow.ellipsis))),
+        child: Center(child: Text(text ?? '', style: const TextStyle(overflow:  TextOverflow.ellipsis))),
       ),
     );
   }

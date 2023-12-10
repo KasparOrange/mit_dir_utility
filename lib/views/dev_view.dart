@@ -24,7 +24,7 @@ class DevView extends StatelessWidget implements SidebarInterface {
 
     return Column(
       children: [
-        SizedBox(height: 50,
+        const SizedBox(height: 50,
         child: ColorPaletteModule()),
         ConstrainedBox(
           constraints: BoxConstraints.expand(height: MediaQuery.of(context).size.height * 0.5),
@@ -45,7 +45,7 @@ class DevView extends StatelessWidget implements SidebarInterface {
                 onPressed: () {
                   Provider.of<RuntimeLoggingService>(context, listen: false).appendLog('Test');
                 },
-                child: Text('AddTestLog')),
+                child: const Text('AddTestLog')),
           ],
         ),
       ],

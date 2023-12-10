@@ -1,18 +1,12 @@
 import 'dart:developer' as dev;
 import 'dart:math';
-import 'dart:typed_data';
 import 'dart:js' as js;
 
-import 'package:clipboard/clipboard.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mit_dir_utility/interfaces.dart';
 import 'package:mit_dir_utility/modules/loading_module.dart';
-import 'package:pasteboard/pasteboard.dart';
 import 'package:signature/signature.dart';
 
 class SigningView extends StatefulWidget implements SidebarInterface {
@@ -316,7 +310,7 @@ class _SigningViewState extends State<SigningView>  {
             );
           })
         ]),
-        Align(alignment: Alignment.topLeft, child: const Text('Version: 0.0.1')),
+        const Align(alignment: Alignment.topLeft, child: Text('Version: 0.0.1')),
       ]);
     }
   }

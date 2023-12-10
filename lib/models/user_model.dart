@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mit_dir_utility/services/database_service.dart';
 
 class UserModel {
   DateTime timeOfCreation;
@@ -40,12 +38,12 @@ class UserModel {
       String? nickName,
       String? note,
       String? phone})
-      : this.dateOfBirth = dateOfBirth ?? DateTime.utc(1900, 1, 1),
-        this.email = email ?? 'EMPTY',
-        this.nickName = nickName ?? 'EMPTY',
-        this.note = note ?? 'EMPTY',
-        this.phone = phone ?? 'EMPTY',
-        this.timeOfCreation = timeOfCreation ??
+      : dateOfBirth = dateOfBirth ?? DateTime.utc(1900, 1, 1),
+        email = email ?? 'EMPTY',
+        nickName = nickName ?? 'EMPTY',
+        note = note ?? 'EMPTY',
+        phone = phone ?? 'EMPTY',
+        timeOfCreation = timeOfCreation ??
             DateTime.now()
                 .toUtc(); // NOTE: If no creationTime is provided we assume the user is new and assign now to this field.
 

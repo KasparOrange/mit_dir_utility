@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mit_dir_utility/models/user_model.dart';
@@ -26,7 +25,7 @@ class UserDropdownModule extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 50),
             child: Text(
               'Are you sure you want to delete the user: ${user.firstName} ${user.lastName} with the UID: ${user.uid}?',
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14),
+              style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14),
             ),
           ),
           Row(
@@ -41,7 +40,7 @@ class UserDropdownModule extends StatelessWidget {
                       GoRouter.of(context).pop();
                       DatabaseService.deletePersonInFBFirestore(uid: user.uid);
                     },
-                    child: Text('DELETE')),
+                    child: const Text('DELETE')),
               ),
               SizedBox(
                 width: 100,
@@ -50,7 +49,7 @@ class UserDropdownModule extends StatelessWidget {
                     onPressed: () {
                       GoRouter.of(context).pop();
                     },
-                    child: Text('Back')),
+                    child: const Text('Back')),
               ),
             ],
           )
@@ -76,7 +75,7 @@ class UserDropdownModule extends StatelessWidget {
                       return Material(child: UserEditorModule(user: user));
                     });
               },
-              child: Center(child: Text('Edit'))),
+              child: const Center(child: Text('Edit'))),
         ),
         PopupMenuItem(
           value: 1,
@@ -92,7 +91,7 @@ class UserDropdownModule extends StatelessWidget {
                       return _createDeleteDialog(context, user);
                     });
               },
-              child: Center(child: Text('Delete'))),
+              child: const Center(child: Text('Delete'))),
         ),
       ],
       onSelected: (value) {
@@ -103,12 +102,12 @@ class UserDropdownModule extends StatelessWidget {
       elevation: 5,
       shape: Border.all(),
       child: Container(
-          padding: EdgeInsets.all(5),
+          padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
               border: Border.all(width: 2),
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(4)),
-          child: Text('Options')),
+          child: const Text('Options')),
     );
   }
 }

@@ -1,11 +1,7 @@
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:ffloat_nullsafety/ffloat_nullsafety.dart';
 import 'package:mit_dir_utility/services/authentication_service.dart';
-import 'package:mit_dir_utility/services/theme_service.dart';
 import 'package:provider/provider.dart';
 
 class ProfileModule extends StatefulWidget {
@@ -141,7 +137,7 @@ class _SignInFormState extends State<SignInForm> {
                   onPressed: () {
                     AuthenticationService.signInWithEmailAndPassword(email, password);
                   },
-                  child: Text('Sign in'))
+                  child: const Text('Sign in'))
             ],
           )),
     );

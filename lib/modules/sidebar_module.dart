@@ -5,7 +5,7 @@ import 'package:mit_dir_utility/states/sidebar_state.dart';
 import 'package:provider/provider.dart';
 
 class SidebarModule extends StatefulWidget {
-  const SidebarModule({Key? key}) : super(key: key);
+  const SidebarModule({super.key});
 
   @override
   State<SidebarModule> createState() => _SidebarModuleState();

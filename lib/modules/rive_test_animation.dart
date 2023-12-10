@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rive/rive.dart';
 
 class RiveTestAnimation extends StatelessWidget {
@@ -13,7 +12,7 @@ class RiveTestAnimation extends StatelessWidget {
     if (fullScreen) {
       var height = MediaQuery.of(context).size.height;
       var width = MediaQuery.of(context).size.width;
-        return RiveAnimation.asset('animations/tryoutWithJanga.riv', alignment: Alignment.centerLeft,);
+        return const RiveAnimation.asset('animations/tryoutWithJanga.riv', alignment: Alignment.centerLeft,);
     } else {
       return const Expanded(child: RiveAnimation.asset('animations/mitdirlogobounce.riv'));
     }

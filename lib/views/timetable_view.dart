@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:mit_dir_utility/interfaces.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -333,9 +332,7 @@ class _TimetableViewState extends State<TimetableView> {
 
   /// Returns the calendar widget based on the properties passed
   SfCalendar _getShiftScheduler(
-      [CalendarDataSource? calendarDataSource,
-      dynamic calendarTapCallback,
-      dynamic viewChangedCallback]) {
+      [CalendarDataSource? calendarDataSource]) {
     return SfCalendar(
       controller: _calendarController,
       dataSource: calendarDataSource,

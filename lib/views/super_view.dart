@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mit_dir_utility/modules/color_palette_module.dart';
 import 'package:mit_dir_utility/modules/profile_module.dart';
 import 'package:mit_dir_utility/modules/background_logo_module.dart';
 import 'package:mit_dir_utility/services/keyboard_service.dart';
@@ -39,41 +38,40 @@ class _SuperViewState extends State<SuperView> {
             centerTitle: true,
             leadingWidth:
                 1000, // TODO: Make this depend on the size of the buttons. MaterialButton min width 88. Make TextButtonStyle so.
-            leading: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ...RoutingService.routeBuilders.keys.map((e) {
-                    Color? color;
-                    double? elevation;
-                    Widget? child;
-                    EdgeInsets? padding;
-                    if (userValue == null && e != '/') {
-                      return const SizedBox(width: 0);
-                    }
-                    if (e == GoRouter.of(context).location) {
-                      color = Colors.amber;
-                      elevation = 0;
-                    }
-                    if (e == '/') {
-                      child = Image.asset(
-                        'assets/images/logo_brown.png',
-                        color: Colors.black,
-                      );
-                      padding = const EdgeInsets.all(12);
-                    } else {
-                      child = Text(RoutingService.titleFormRoutePath(e));
-                    }
-                    return TextButton(
-                      onPressed: () => context.go(e),
-                      style: TextButton.styleFrom(
-                        backgroundColor: color,
-                        elevation: elevation,
-                        padding: padding,
-                      ),
-                      child: child,
-                    );
-                  }).toList(),
-                ]),
+            leading: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              ...RoutingService.routeBuilders.keys.map((e) {
+                Color? color;
+                double? elevation;
+                Widget? child;
+                EdgeInsets? padding;
+                if (userValue == null && e != '/') {
+                  return const SizedBox(width: 0);
+                }
+                //if (e == GoRouter.of(context).configuration.findMatch(location: context.currentLocation).path) {
+                if (e == GoRouterState.of(context).matchedLocation) {
+                  color = Colors.amber;
+                  elevation = 0;
+                }
+                if (e == '/') {
+                  child = Image.asset(
+                    'assets/images/logo_brown.png',
+                    color: Colors.black,
+                  );
+                  padding = const EdgeInsets.all(12);
+                } else {
+                  child = Text(RoutingService.titleFormRoutePath(e));
+                }
+                return TextButton(
+                  onPressed: () => context.go(e),
+                  style: TextButton.styleFrom(
+                    backgroundColor: color,
+                    elevation: elevation,
+                    padding: padding,
+                  ),
+                  child: child,
+                );
+              }),
+            ]),
             actions: [
               // Container(
               //     decoration: BoxDecoration(
@@ -82,12 +80,14 @@ class _SuperViewState extends State<SuperView> {
               // )),
               Consumer<NetworkStatusService>(builder: (context, value, child) {
                 return Container(
-                  width: 20,
+                    width: 20,
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.black, width: 2),
-                  shape: BoxShape.circle,
-                  color: value.isOnline ? ThemeService.colors.okLight : ThemeService.colors.errorLight,
-                ));
+                      shape: BoxShape.circle,
+                      color: value.isOnline
+                          ? ThemeService.colors.okLight
+                          : ThemeService.colors.errorLight,
+                    ));
               }),
               // Tooltip(message: 'SHIFT + J = Left\nSHIFT + K = Right', child: Icon(Icons.keyboard)),
               const SizedBox(width: 30),

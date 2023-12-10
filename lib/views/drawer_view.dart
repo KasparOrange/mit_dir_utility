@@ -16,7 +16,7 @@ class DrawerView extends StatelessWidget {
             child: Text('Drawer Header'),
           ),
           ListTile(
-            title: Text('Item 1'),
+            title: const Text('Item 1'),
             onTap: () {
               // Update the state of the app
               // ...
@@ -25,7 +25,7 @@ class DrawerView extends StatelessWidget {
             },
           ),
           ListTile(
-            title: Text('Item 2'),
+            title: const Text('Item 2'),
             onTap: () {
               // Update the state of the app
               // ...

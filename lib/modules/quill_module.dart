@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -55,7 +54,7 @@ class _QuillModuleState extends State<QuillModule> {
   String _htmlText = '';
 
   Widget _buildHtmlSizeInMBText(String htmlString) {
-    Uint8List bytes = utf8.encode(htmlString) as Uint8List;
+    Uint8List bytes = utf8.encode(htmlString);
 
     var size = bytes.length / (1024 * 1024);
 
@@ -124,8 +123,8 @@ class _QuillModuleState extends State<QuillModule> {
 
     return Row(
       children: [
-        SizedBox(height: 20, width: 100, child: const TextField()),
-        TextButton(onPressed: onPressed, child: Text('Resize Image')),
+        const SizedBox(height: 20, width: 100, child: TextField()),
+        TextButton(onPressed: onPressed, child: const Text('Resize Image')),
       ],
     );
   }
@@ -285,7 +284,7 @@ class _QuillModuleState extends State<QuillModule> {
                       _htmlText = text;
                     });
                   },
-                  child: Text('Refresh HTML')),
+                  child: const Text('Refresh HTML')),
               Html(data: _htmlText),
             ],
           ),

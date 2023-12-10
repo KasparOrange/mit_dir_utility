@@ -1,7 +1,6 @@
 import 'package:csv/csv.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:mit_dir_utility/services/database_service.dart';
 import 'package:mit_dir_utility/services/logging_service.dart';
 
 class FilesystemService {

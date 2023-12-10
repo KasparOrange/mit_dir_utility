@@ -1,8 +1,6 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mit_dir_utility/models/user_model.dart';
-import 'package:mit_dir_utility/services/database_service.dart';
 
 class DatabaseViewState extends ChangeNotifier {
   

@@ -1,9 +1,5 @@
-import 'dart:math';
 
-import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class ThemeService {
   static final CustomColors colors = CustomColors();
@@ -145,7 +141,7 @@ class CustomColors {
 
   final Color oldPrimaryColor = const Color.fromARGB(255, 185, 124, 3);
   final Color oldSecondaryColor = const Color.fromARGB(255, 129, 85, 0);
-  final Color oldTertiaryColor = Color.fromARGB(255, 245, 221, 166);
+  final Color oldTertiaryColor = const Color.fromARGB(255, 245, 221, 166);
 
   final Color paynesGray = const Color.fromARGB(255, 87, 110, 135);
   final Color linen = const Color.fromARGB(255, 253, 245, 234);

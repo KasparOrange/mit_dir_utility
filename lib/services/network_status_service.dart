@@ -1,7 +1,6 @@
 import 'dart:html' as html;
 
 import 'package:flutter/material.dart';
-import 'package:mit_dir_utility/services/logging_service.dart';
 
 class NetworkStatusService with ChangeNotifier {
   NetworkStatusService() {

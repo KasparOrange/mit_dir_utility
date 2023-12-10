@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mit_dir_utility/globals.dart';
 import 'package:mit_dir_utility/services/theme_service.dart';
 
 class DialogModule extends StatelessWidget {
