@@ -2,15 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mit_dir_utility/firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'package:mit_dir_utility/models/user_model.dart';
 import 'package:mit_dir_utility/services/authentication_service.dart';
 import 'package:mit_dir_utility/services/keyboard_service.dart';
 import 'package:mit_dir_utility/services/routing_service.dart';
 import 'package:mit_dir_utility/services/runtime_logging_service.dart';
-import 'package:mit_dir_utility/views/authentication_view.dart';
-import 'package:mit_dir_utility/views/signing_view.dart';
-import 'package:mit_dir_utility/views/drawer_view.dart';
-import 'package:mit_dir_utility/views/runtime_logging_view.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
