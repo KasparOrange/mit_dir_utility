@@ -1,4 +1,5 @@
 {
     "editor.acceptSuggestionOnEnter": "on",
     "cmake.configureOnOpen": false,
+    "dotnet.defaultSolution": "disable",
 }
