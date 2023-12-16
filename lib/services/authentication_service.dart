@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mit_dir_utility/services/database_service.dart';
 import 'package:mit_dir_utility/services/routing_service.dart';
 import 'package:provider/provider.dart';
 import 'package:validation_pro/validate.dart';
@@ -48,6 +49,25 @@ class AuthenticationService {
     } catch (e) {
       log(e);
       return null;
+    }
+  }
+
+  /// This will first create the user in the authorization and then in the database.
+  Future<void> createUser(String email, String password) async {
+    try {
+      UserCredential userCredential = await fai.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      DatabaseService.createUserInDatabase(user: userCredential.user!);
+
+      String uid = userCredential.user!.uid;
+
+      await firestore.collection('users').doc(uid).set(additionalUserInfo);
+
+    } catch (e) {
+      print('Error creating user: $e');
     }
   }
 
